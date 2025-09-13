@@ -156,6 +156,9 @@ const Navbar: React.FC = () => {
           <NavLink to="/activity" $isActive={isActive('/activity')}>
             🏃 Activity
           </NavLink>
+          <NavLink to="/gym" $isActive={isActive('/gym')}>
+            🏋️‍♂️ Gym
+          </NavLink>
           <NavLink to="/progress" $isActive={isActive('/progress')}>
             📈 Progress
           </NavLink>

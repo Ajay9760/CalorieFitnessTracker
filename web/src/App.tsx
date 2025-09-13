@@ -5,6 +5,7 @@ import { store } from './store';
 import Dashboard from './pages/Dashboard';
 import FoodLog from './pages/FoodLog';
 import Activity from './pages/Activity';
+import Gym from './pages/Gym';
 import Progress from './pages/Progress';
 import Profile from './pages/Profile';
 import Auth from './pages/Auth';
@@ -39,6 +40,7 @@ function AppContent() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/food" element={<FoodLog />} />
             <Route path="/activity" element={<Activity />} />
+            <Route path="/gym" element={<Gym />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/profile" element={<Profile />} />
             {/* Redirect any unknown routes to dashboard when authenticated */}
