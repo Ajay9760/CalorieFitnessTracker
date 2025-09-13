@@ -1,97 +1,228 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🍎 Calorie Fitness Tracker
 
-# Getting Started
+A comprehensive fitness and nutrition tracking application with both **React Native mobile app** and **React web interface**. Track your daily calorie intake, monitor fitness activities, and achieve your health goals with our extensive Indian food database.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🌟 Features
 
-## Step 1: Start Metro
+### 📱 Mobile App (React Native)
+- **Dashboard** - Overview of daily nutrition and fitness stats
+- **Food Logging** - Search and log meals from extensive Indian food database
+- **Activity Tracking** - Record workouts and physical activities
+- **Progress Monitoring** - Visual charts and progress tracking
+- **User Profile** - Personal settings and goals management
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 💻 Web App (React)
+- **Responsive Design** - Works on all screen sizes
+- **Real-time Sync** - Data synchronization across platforms
+- **Advanced Analytics** - Detailed nutrition and fitness insights
+- **Multi-device Support** - Access from any browser
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 🥗 Indian Food Database
+- **1000+ Food Items** - Comprehensive database of Indian foods
+- **Regional Cuisines** - North, South, East, and West Indian dishes
+- **Detailed Nutrition** - Calories, macros, vitamins, and minerals
+- **Multiple Serving Sizes** - Flexible portion tracking
+- **Hindi Names** - Local language support
 
-```sh
-# Using npm
-npm start
+## 🏗️ Technology Stack
 
-# OR using Yarn
-yarn start
+### Frontend
+- **React Native** - Mobile app development
+- **React** - Web application
+- **TypeScript** - Type-safe development
+- **Redux Toolkit** - State management
+- **React Navigation** - Mobile navigation
+- **Recharts** - Data visualization
+
+### Backend
+- **Node.js** - Server runtime
+- **Express.js** - Web framework
+- **RESTful APIs** - Clean API architecture
+
+### Tools & Libraries
+- **AsyncStorage** - Local data persistence
+- **React Hook Form** - Form management
+- **Date-fns** - Date utilities
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- React Native development environment (for mobile)
+- Android Studio / Xcode (for mobile testing)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Ajay9760/CalorieFitnessTracker.git
+   cd CalorieFitnessTracker
+   ```
+
+2. **Install root dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up the web app**
+   ```bash
+   cd web
+   npm install
+   npm start
+   ```
+
+4. **Set up the mobile app**
+   ```bash
+   # From root directory
+   npm install
+   npx react-native run-android  # For Android
+   npx react-native run-ios      # For iOS
+   ```
+
+5. **Set up the backend** (optional)
+   ```bash
+   cd backend
+   npm install
+   npm start
+   ```
+
+## 📁 Project Structure
+
+```
+CalorieFitnessTracker/
+├── 📱 Mobile App (React Native)
+│   ├── src/
+│   │   ├── screens/          # App screens
+│   │   ├── navigation/       # Navigation setup
+│   │   ├── store/           # Redux store
+│   │   ├── data/            # Food database
+│   │   └── types/           # TypeScript definitions
+│   └── App.tsx
+│
+├── 💻 Web App (React)
+│   ├── public/
+│   ├── src/
+│   │   ├── pages/           # Web pages
+│   │   ├── components/      # Reusable components
+│   │   ├── store/          # Redux store
+│   │   └── data/           # Food database
+│   └── package.json
+│
+├── 🔧 Backend (Node.js)
+│   ├── routes/             # API routes
+│   ├── models/            # Data models
+│   └── server.js
+│
+└── 📚 Documentation
+    └── README.md
 ```
 
-## Step 2: Build and run your app
+## 🎯 Key Functionalities
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Nutrition Tracking
+- Search from 1000+ Indian foods
+- Log meals with accurate portions
+- Track macronutrients (protein, carbs, fats)
+- Monitor micronutrients and vitamins
+- Set and track daily calorie goals
 
-### Android
+### Activity Monitoring
+- Log various physical activities
+- Track calories burned
+- Monitor workout duration and intensity
+- View activity history and trends
 
-```sh
-# Using npm
-npm run android
+### Progress Analytics
+- Visual charts and graphs
+- Weight tracking over time
+- Nutrition goal achievement
+- Activity performance metrics
+- Weekly and monthly summaries
 
-# OR using Yarn
-yarn android
+### User Experience
+- Intuitive and clean interface
+- Fast search and autocomplete
+- Offline data storage
+- Cross-platform synchronization
+- Customizable user preferences
+
+## 🛠️ Development
+
+### Adding New Foods
+Foods are stored in `src/data/indianFoodDatabase.ts`. To add new items:
+
+```typescript
+{
+  id: 'unique-food-id',
+  name: 'Food Name',
+  nameHindi: 'हिंदी नाम',
+  category: 'food_category',
+  region: ['north_indian', 'south_indian'],
+  calories: 250,
+  macros: {
+    protein: 10.5,
+    carbs: 45.2,
+    fats: 8.1,
+    fiber: 3.2,
+    sugar: 5.0,
+    sodium: 150
+  },
+  servingSizes: [
+    { unit: 'cup', grams: 200, description: '1 cup' }
+  ],
+  isCommonDish: true,
+  tags: ['vegetarian', 'healthy']
+}
 ```
 
-### iOS
+### Running Tests
+```bash
+# Web app tests
+cd web
+npm test
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+# Mobile app tests (from root)
+npm test
 ```
 
-Then, and every time you update your native dependencies, run:
+## 📊 Features in Development
 
-```sh
-bundle exec pod install
-```
+- [ ] Meal planning and recipes
+- [ ] Social sharing and community features
+- [ ] Integration with fitness wearables
+- [ ] AI-powered nutrition recommendations
+- [ ] Barcode scanning for packaged foods
+- [ ] Restaurant menu integration
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## 🤝 Contributing
 
-```sh
-# Using npm
-npm run ios
+We welcome contributions! Please follow these steps:
 
-# OR using Yarn
-yarn ios
-```
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 📝 License
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Step 3: Modify your app
+## 👨‍💻 Author
 
-Now that you have successfully run the app, let's make changes!
+**Ajay** - [@Ajay9760](https://github.com/Ajay9760)
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 📧 Support
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+If you have any questions or need support, please open an issue on GitHub or contact the maintainer.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## 🙏 Acknowledgments
 
-## Congratulations! :tada:
+- Indian food nutritional data compiled from various authentic sources
+- UI/UX inspiration from leading fitness applications
+- Open source community for excellent libraries and tools
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+⭐ **Star this repository if you find it helpful!** ⭐
