@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/CalorieFitnessTracker/static/css/main.09860bc9.css",
-    "main.js": "/CalorieFitnessTracker/static/js/main.d3acc531.js",
+    "main.js": "/CalorieFitnessTracker/static/js/main.abfbaeb5.js",
     "static/js/453.ccb8544d.chunk.js": "/CalorieFitnessTracker/static/js/453.ccb8544d.chunk.js",
     "index.html": "/CalorieFitnessTracker/index.html",
     "main.09860bc9.css.map": "/CalorieFitnessTracker/static/css/main.09860bc9.css.map",
-    "main.d3acc531.js.map": "/CalorieFitnessTracker/static/js/main.d3acc531.js.map",
+    "main.abfbaeb5.js.map": "/CalorieFitnessTracker/static/js/main.abfbaeb5.js.map",
     "453.ccb8544d.chunk.js.map": "/CalorieFitnessTracker/static/js/453.ccb8544d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.09860bc9.css",
-    "static/js/main.d3acc531.js"
+    "static/js/main.abfbaeb5.js"
   ]
 }
