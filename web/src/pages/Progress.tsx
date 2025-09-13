@@ -102,7 +102,14 @@ const StatLabel = styled.div`
 
 const Progress: React.FC = () => {
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
-  const { todaysActivity } = useSelector((state: RootState) => state.activities);
+  const { activities } = useSelector((state: RootState) => state.activities);
+
+  // Calculate today's workout totals
+  const todaysWorkouts = activities.filter(
+    activity => new Date(activity.timestamp).toDateString() === new Date().toDateString()
+  );
+  const totalCaloriesBurned = todaysWorkouts.reduce((total, workout) => total + workout.caloriesBurned, 0);
+  const totalWorkoutDuration = todaysWorkouts.reduce((total, workout) => total + workout.duration, 0);
 
   // Generate sample data for the last 7 days
   const weeklyData = useMemo(() => {
@@ -117,12 +124,12 @@ const Progress: React.FC = () => {
         protein: isToday 
           ? todaysMeals.reduce((sum, meal) => sum + meal.macros.protein, 0)
           : Math.floor(Math.random() * 30) + 50,
-        steps: isToday 
-          ? (todaysActivity?.steps || 0)
-          : Math.floor(Math.random() * 5000) + 5000,
+        workoutMinutes: isToday 
+          ? totalWorkoutDuration
+          : Math.floor(Math.random() * 60) + 30,
       };
     });
-  }, [todaysMeals, todaysActivity]);
+  }, [todaysMeals, totalWorkoutDuration]);
 
   // Calculate today's macros for pie chart
   const macroData = useMemo(() => {
@@ -149,7 +156,6 @@ const Progress: React.FC = () => {
 
   const todaysCalories = todaysMeals.reduce((sum, meal) => sum + meal.calories, 0);
   const todaysProtein = todaysMeals.reduce((sum, meal) => sum + meal.macros.protein, 0);
-  const todaysSteps = todaysActivity?.steps || 0;
   const avgCalories = Math.round(weeklyData.reduce((sum, day) => sum + day.calories, 0) / 7);
 
   return (
@@ -166,8 +172,8 @@ const Progress: React.FC = () => {
           <StatLabel>Today's Protein</StatLabel>
         </StatCard>
         <StatCard style={{ animationDelay: '2s' }}>
-          <StatValue>{todaysSteps.toLocaleString()}</StatValue>
-          <StatLabel>Today's Steps</StatLabel>
+          <StatValue>{totalWorkoutDuration}</StatValue>
+          <StatLabel>Workout Minutes</StatLabel>
         </StatCard>
         <StatCard style={{ animationDelay: '3s' }}>
           <StatValue>{avgCalories}</StatValue>
@@ -228,7 +234,7 @@ const Progress: React.FC = () => {
         </ChartCard>
 
         <ChartCard>
-          <ChartTitle>Weekly Step Count</ChartTitle>
+          <ChartTitle>Weekly Workout Minutes</ChartTitle>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -244,12 +250,12 @@ const Progress: React.FC = () => {
               />
               <Legend />
               <Bar 
-                dataKey="steps" 
-                fill="url(#stepGradient)" 
+                dataKey="workoutMinutes" 
+                fill="url(#workoutGradient)" 
                 radius={[4, 4, 0, 0]}
               />
               <defs>
-                <linearGradient id="stepGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="workoutGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.9}/>
                   <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
                 </linearGradient>

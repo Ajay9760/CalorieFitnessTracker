@@ -465,13 +465,18 @@ const MealDetails = styled.div`
 const Dashboard: React.FC = () => {
   const { currentUser } = useSelector((state: RootState) => state.user);
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
-  const { todaysActivity } = useSelector((state: RootState) => state.activities);
+  const { activities } = useSelector((state: RootState) => state.activities);
 
   // Calculate today's totals
   const todaysCalories = todaysMeals.reduce((total, meal) => total + meal.calories, 0);
   const todaysProtein = todaysMeals.reduce((total, meal) => total + meal.macros.protein, 0);
-  const todaysSteps = todaysActivity?.steps || 0;
-  const caloriesBurned = todaysActivity?.caloriesBurned || 0;
+  
+  // Calculate today's workout totals from activities
+  const todaysWorkouts = activities.filter(
+    activity => new Date(activity.timestamp).toDateString() === new Date().toDateString()
+  );
+  const totalCaloriesBurned = todaysWorkouts.reduce((total, workout) => total + workout.caloriesBurned, 0);
+  const totalWorkoutDuration = todaysWorkouts.reduce((total, workout) => total + workout.duration, 0);
 
   // Fitness quotes array
   const fitnessQuotes = [
@@ -523,8 +528,8 @@ const Dashboard: React.FC = () => {
             <HeroStatLabel>Calories Logged</HeroStatLabel>
           </HeroStatCard>
           <HeroStatCard>
-            <HeroStatValue>{todaysSteps > 0 ? todaysSteps.toLocaleString() : '--'}</HeroStatValue>
-            <HeroStatLabel>Steps Taken</HeroStatLabel>
+            <HeroStatValue>{totalCaloriesBurned || '--'}</HeroStatValue>
+            <HeroStatLabel>Calories Burned</HeroStatLabel>
           </HeroStatCard>
           <HeroStatCard>
             <HeroStatValue>{todaysProtein > 0 ? todaysProtein.toFixed(0) + 'g' : '--'}</HeroStatValue>
@@ -532,30 +537,6 @@ const Dashboard: React.FC = () => {
           </HeroStatCard>
         </HeroStats>
       </WelcomeMessage>
-
-      <Header>Today's Overview</Header>
-      
-      <StatsGrid>
-        <StatCard>
-          <StatValue>{todaysCalories}</StatValue>
-          <StatLabel>Calories Consumed</StatLabel>
-        </StatCard>
-        
-        <StatCard>
-          <StatValue>{caloriesBurned}</StatValue>
-          <StatLabel>Calories Burned</StatLabel>
-        </StatCard>
-        
-        <StatCard>
-          <StatValue>{todaysProtein.toFixed(1)}g</StatValue>
-          <StatLabel>Protein Intake</StatLabel>
-        </StatCard>
-        
-        <StatCard>
-          <StatValue>{todaysSteps.toLocaleString()}</StatValue>
-          <StatLabel>Steps Taken</StatLabel>
-        </StatCard>
-      </StatsGrid>
 
       {todaysMeals.length === 0 ? (
         <MotivationalSection>

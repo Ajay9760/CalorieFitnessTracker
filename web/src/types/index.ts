@@ -91,6 +91,45 @@ export interface Exercise {
   caloriesBurned: number;
 }
 
+// Workout Database Types
+export type WorkoutCategory = 
+  | 'gym_strength' | 'cardio' | 'hiit' | 'yoga' | 'bodyweight' 
+  | 'traditional_indian' | 'sports' | 'dance' | 'flexibility';
+
+export interface WorkoutExercise {
+  id: string;
+  name: string;
+  nameHindi?: string;
+  category: WorkoutCategory;
+  type: 'strength' | 'cardio' | 'flexibility' | 'sports';
+  caloriesPerMinute: number;
+  description: string;
+  instructions: string[];
+  targetMuscles: string[];
+  equipment: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  tags: string[];
+}
+
+export interface WorkoutEntry {
+  id: string;
+  userId?: string;
+  exerciseId: string;
+  exerciseName: string;
+  category: WorkoutCategory;
+  type: 'strength' | 'cardio' | 'flexibility' | 'sports';
+  duration: number; // in minutes
+  caloriesBurned: number;
+  sets?: number; // for strength training
+  reps?: number[]; // reps per set for strength training
+  weight?: number[]; // weight per set in kg
+  distance?: number; // for cardio in km
+  intensity?: 'low' | 'moderate' | 'high' | 'extreme';
+  heartRate?: number; // average heart rate
+  notes?: string;
+  timestamp: Date;
+}
+
 // Goal Types
 export interface DailyGoals {
   userId: string;
