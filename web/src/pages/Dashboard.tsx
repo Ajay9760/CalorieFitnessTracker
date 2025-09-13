@@ -468,15 +468,15 @@ const Dashboard: React.FC = () => {
   const { activities } = useSelector((state: RootState) => state.activities);
 
   // Calculate today's totals
-  const todaysCalories = todaysMeals.reduce((total, meal) => total + meal.calories, 0);
-  const todaysProtein = todaysMeals.reduce((total, meal) => total + meal.macros.protein, 0);
+  const todaysCalories = todaysMeals.reduce((total: number, meal: any) => total + meal.calories, 0);
+  const todaysProtein = todaysMeals.reduce((total: number, meal: any) => total + meal.macros.protein, 0);
   
   // Calculate today's workout totals from activities
   const todaysWorkouts = activities.filter(
-    activity => new Date(activity.timestamp).toDateString() === new Date().toDateString()
+    (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
-  const totalCaloriesBurned = todaysWorkouts.reduce((total, workout) => total + workout.caloriesBurned, 0);
-  const totalWorkoutDuration = todaysWorkouts.reduce((total, workout) => total + workout.duration, 0);
+  const totalCaloriesBurned = todaysWorkouts.reduce((total: number, workout: any) => total + workout.caloriesBurned, 0);
+  const totalWorkoutDuration = todaysWorkouts.reduce((total: number, workout: any) => total + workout.duration, 0);
 
   // Fitness quotes array
   const fitnessQuotes = [
@@ -576,7 +576,7 @@ const Dashboard: React.FC = () => {
         <MealSummaryCard>
           <h3>🍽️ Today's Meal Summary</h3>
           <MealsList>
-            {todaysMeals.map((meal, index) => (
+            {todaysMeals.map((meal: any, index: number) => (
               <MealItem key={meal.id}>
                 <MealIcon>
                   {meal.mealType === 'breakfast' && '🍳'}

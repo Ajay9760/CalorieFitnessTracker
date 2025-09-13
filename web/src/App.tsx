@@ -9,53 +9,40 @@ import Progress from './pages/Progress';
 import Profile from './pages/Profile';
 import Auth from './pages/Auth';
 import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
 import { selectIsAuthenticated } from './store/slices/userSlice';
 import './App.css';
 
 function AppContent() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
+  // If not authenticated, show only the auth page
+  if (!isAuthenticated) {
+    return (
+      <Router>
+        <div className="App">
+          <main className="full-content">
+            <Auth />
+          </main>
+        </div>
+      </Router>
+    );
+  }
+
+  // If authenticated, show the main app with navbar
   return (
     <Router>
       <div className="App">
-        {isAuthenticated && <Navbar />}
-        <main className={isAuthenticated ? "main-content" : "full-content"}>
+        <Navbar />
+        <main className="main-content">
           <Routes>
-            {/* Public route */}
-            <Route path="/auth" element={<Auth />} />
-            
-            {/* Protected routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/food" element={
-              <ProtectedRoute>
-                <FoodLog />
-              </ProtectedRoute>
-            } />
-            <Route path="/activity" element={
-              <ProtectedRoute>
-                <Activity />
-              </ProtectedRoute>
-            } />
-            <Route path="/progress" element={
-              <ProtectedRoute>
-                <Progress />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/food" element={<FoodLog />} />
+            <Route path="/activity" element={<Activity />} />
+            <Route path="/progress" element={<Progress />} />
+            <Route path="/profile" element={<Profile />} />
+            {/* Redirect any unknown routes to dashboard when authenticated */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
       </div>

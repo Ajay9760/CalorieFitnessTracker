@@ -273,7 +273,7 @@ const FoodLog: React.FC = () => {
       {todaysMeals.length > 0 && (
         <SearchSection style={{ marginTop: '2rem' }}>
           <h3>Today's Meals ({todaysMeals.length} items)</h3>
-          {todaysMeals.map(meal => (
+          {todaysMeals.map((meal: any) => (
             <div key={meal.id} style={{ padding: '0.5rem', borderLeft: '3px solid #667eea', margin: '0.5rem 0', background: '#f8f9fa' }}>
               <strong>{meal.foodName}</strong> - {meal.mealType} - {meal.calories} cal
             </div>

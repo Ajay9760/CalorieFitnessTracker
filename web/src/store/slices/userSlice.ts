@@ -52,6 +52,8 @@ const userSlice = createSlice({
       state.error = null;
       state.loginAttempts = 0;
       state.lastLoginAt = null;
+      // Clear localStorage
+      localStorage.removeItem('calorieFitnessState');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

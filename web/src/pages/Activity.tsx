@@ -445,7 +445,7 @@ const Activity: React.FC = () => {
   }, [searchQuery, selectedCategory]);
 
   const todaysWorkouts = activities.filter(
-    activity => new Date(activity.timestamp).toDateString() === new Date().toDateString()
+    (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
 
   const handleWorkoutClick = (workout: WorkoutExercise) => {
@@ -584,7 +584,7 @@ const Activity: React.FC = () => {
                 </div>
               ) : (
                 <WorkoutsList>
-                  {todaysWorkouts.map(activity => (
+                  {todaysWorkouts.map((activity: any) => (
                     <WorkoutItem key={activity.id}>
                       <div>
                         <h4>{activity.exerciseName}</h4>

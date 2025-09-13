@@ -106,10 +106,10 @@ const Progress: React.FC = () => {
 
   // Calculate today's workout totals
   const todaysWorkouts = activities.filter(
-    activity => new Date(activity.timestamp).toDateString() === new Date().toDateString()
+    (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
-  const totalCaloriesBurned = todaysWorkouts.reduce((total, workout) => total + workout.caloriesBurned, 0);
-  const totalWorkoutDuration = todaysWorkouts.reduce((total, workout) => total + workout.duration, 0);
+  const totalCaloriesBurned = todaysWorkouts.reduce((total: number, workout: any) => total + workout.caloriesBurned, 0);
+  const totalWorkoutDuration = todaysWorkouts.reduce((total: number, workout: any) => total + workout.duration, 0);
 
   // Generate sample data for the last 7 days
   const weeklyData = useMemo(() => {
@@ -119,10 +119,10 @@ const Progress: React.FC = () => {
       return {
         day,
         calories: isToday 
-          ? todaysMeals.reduce((sum, meal) => sum + meal.calories, 0)
+          ? todaysMeals.reduce((sum: number, meal: any) => sum + meal.calories, 0)
           : Math.floor(Math.random() * 500) + 1500,
         protein: isToday 
-          ? todaysMeals.reduce((sum, meal) => sum + meal.macros.protein, 0)
+          ? todaysMeals.reduce((sum: number, meal: any) => sum + meal.macros.protein, 0)
           : Math.floor(Math.random() * 30) + 50,
         workoutMinutes: isToday 
           ? totalWorkoutDuration
@@ -133,9 +133,9 @@ const Progress: React.FC = () => {
 
   // Calculate today's macros for pie chart
   const macroData = useMemo(() => {
-    const totalProtein = todaysMeals.reduce((sum, meal) => sum + meal.macros.protein, 0);
-    const totalCarbs = todaysMeals.reduce((sum, meal) => sum + meal.macros.carbs, 0);
-    const totalFats = todaysMeals.reduce((sum, meal) => sum + meal.macros.fats, 0);
+    const totalProtein = todaysMeals.reduce((sum: number, meal: any) => sum + meal.macros.protein, 0);
+    const totalCarbs = todaysMeals.reduce((sum: number, meal: any) => sum + meal.macros.carbs, 0);
+    const totalFats = todaysMeals.reduce((sum: number, meal: any) => sum + meal.macros.fats, 0);
     
     if (totalProtein === 0 && totalCarbs === 0 && totalFats === 0) {
       // Sample data when no meals logged
@@ -154,9 +154,9 @@ const Progress: React.FC = () => {
     ];
   }, [todaysMeals]);
 
-  const todaysCalories = todaysMeals.reduce((sum, meal) => sum + meal.calories, 0);
-  const todaysProtein = todaysMeals.reduce((sum, meal) => sum + meal.macros.protein, 0);
-  const avgCalories = Math.round(weeklyData.reduce((sum, day) => sum + day.calories, 0) / 7);
+  const todaysCalories = todaysMeals.reduce((sum: number, meal: any) => sum + meal.calories, 0);
+  const todaysProtein = todaysMeals.reduce((sum: number, meal: any) => sum + meal.macros.protein, 0);
+  const avgCalories = Math.round(weeklyData.reduce((sum: number, day: any) => sum + day.calories, 0) / 7);
 
   return (
     <Container>
