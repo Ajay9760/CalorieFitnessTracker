@@ -8,174 +8,143 @@ import { addActivity } from '../store/slices/activitySlice';
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  background: #f8f9fa;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
 `;
 
 const Header = styled.div`
-  text-align: center;
-  margin-bottom: 3rem;
-  color: white;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   
   h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(45deg, #fff, #f39c12, #e74c3c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s ease-in-out infinite;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   
   p {
-    font-size: 1.2rem;
-    opacity: 0.9;
-  }
-  
-  @keyframes shimmer {
-    0%, 100% { filter: hue-rotate(0deg); }
-    50% { filter: hue-rotate(45deg); }
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin: 0;
   }
 `;
 
 const TabSection = styled.div`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(20px);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 `;
 
 const TabHeader = styled.div`
   display: flex;
   background: #f8f9fa;
-  border-radius: 15px;
-  padding: 0.5rem;
-  margin-bottom: 2rem;
-  overflow-x: auto;
+  border-bottom: 1px solid #e5e7eb;
   
   @media (max-width: 768px) {
-    flex-wrap: nowrap;
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 `;
 
 const Tab = styled.button<{ $active: boolean }>`
   flex: 1;
-  min-width: 120px;
   padding: 1rem 1.5rem;
   border: none;
-  background: ${props => props.$active ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'};
-  color: ${props => props.$active ? 'white' : '#666'};
-  border-radius: 12px;
-  font-weight: 600;
+  background: ${props => props.$active ? 'white' : 'transparent'};
+  color: ${props => props.$active ? '#1f2937' : '#6b7280'};
+  font-weight: ${props => props.$active ? '600' : '500'};
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
+  border-bottom: 3px solid ${props => props.$active ? '#3b82f6' : 'transparent'};
   white-space: nowrap;
   
   &:hover {
-    color: ${props => props.$active ? 'white' : '#333'};
-    background: ${props => props.$active ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(102, 126, 234, 0.1)'};
+    background: ${props => props.$active ? 'white' : '#f1f5f9'};
+    color: ${props => props.$active ? '#1f2937' : '#374151'};
   }
 `;
 
 const WorkoutSession = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 20px;
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
+  background: white;
+  padding: 1.5rem;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="20">🏋️‍♂️</text></svg>') repeat;
-    opacity: 0.1;
-    animation: float 10s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateX(0px); }
-    50% { transform: translateX(-10px); }
+  @media (max-width: 768px) {
+    padding: 1rem;
   }
 `;
 
 const SessionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 1;
   
   h3 {
-    font-size: 1.8rem;
-    margin: 0;
-  }
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 `;
 
 const SessionStats = styled.div`
-  display: flex;
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
-  
-  @media (max-width: 768px) {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const StatItem = styled.div`
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
   text-align: center;
   
   .value {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 600;
+    color: #1f2937;
     display: block;
   }
   
   .label {
-    font-size: 0.9rem;
-    opacity: 0.8;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
   }
 `;
 
 const BodyPartGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
 `;
 
 const BodyPartCard = styled.div<{ $color: string }>`
   background: white;
-  border-radius: 15px;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid ${props => props.$color};
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
   cursor: pointer;
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    border-left-width: 6px;
+    border-color: #d1d5db;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -188,30 +157,31 @@ const CardHeader = styled.div`
   h3 {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.3rem;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
     margin: 0;
-    color: #333;
+    color: #1f2937;
     
     .emoji {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
   }
   
   .count {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
   }
 `;
 
 const ExercisesList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 `;
 
 const ExerciseItem = styled.div`
@@ -219,14 +189,15 @@ const ExerciseItem = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  transition: all 0.15s ease;
   cursor: pointer;
   
   &:hover {
-    background: #e9ecef;
-    transform: translateX(5px);
+    background: #f3f4f6;
+    border-color: #e5e7eb;
   }
 `;
 
@@ -234,44 +205,44 @@ const ExerciseInfo = styled.div`
   flex: 1;
   
   .name {
-    font-weight: 600;
-    color: #333;
+    font-weight: 500;
+    color: #1f2937;
     margin-bottom: 0.25rem;
+    font-size: 0.9rem;
   }
   
   .details {
-    font-size: 0.8rem;
-    color: #666;
+    font-size: 0.75rem;
+    color: #6b7280;
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
   }
   
   .difficulty {
-    padding: 0.125rem 0.5rem;
-    border-radius: 8px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 500;
     
-    &.Beginner { background: #d4edda; color: #155724; }
-    &.Intermediate { background: #fff3cd; color: #856404; }
-    &.Advanced { background: #f8d7da; color: #721c24; }
+    &.Beginner { background: #dcfce7; color: #16a34a; }
+    &.Intermediate { background: #fef3c7; color: #d97706; }
+    &.Advanced { background: #fee2e2; color: #dc2626; }
   }
 `;
 
 const ActionButton = styled.button`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #3b82f6;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.15s ease;
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    background: #2563eb;
   }
 `;
 
@@ -281,119 +252,161 @@ const Modal = styled.div<{ $show: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   display: ${props => props.$show ? 'flex' : 'none'};
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
-  padding: 1rem;
+  padding: 2rem 1rem;
+  overflow-y: auto;
 `;
 
 const ModalContent = styled.div`
   background: white;
-  border-radius: 20px;
-  padding: 2rem;
+  border-radius: 12px;
+  padding: 0;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  margin: auto;
 `;
 
 const ModalHeader = styled.div`
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f8f9fa;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
   
   h2 {
     flex: 1;
     margin: 0;
-    color: #333;
-    font-size: 1.5rem;
+    color: #1f2937;
+    font-size: 1.25rem;
+    font-weight: 600;
   }
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   cursor: pointer;
-  color: #666;
-  padding: 0.5rem;
+  color: #9ca3af;
+  padding: 0.25rem;
+  border-radius: 4px;
   
   &:hover {
-    color: #333;
+    color: #6b7280;
+    background: #f3f4f6;
   }
 `;
 
+const ModalBody = styled.div`
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 100px);
+`;
+
 const ExerciseAnimation = styled.div`
-  width: 200px;
-  height: 200px;
-  margin: 0 auto 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 15px;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1.5rem;
+  background: #f3f4f6;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
+  border: 1px solid #e5e7eb;
   
   .animation-placeholder {
-    font-size: 4rem;
+    font-size: 3rem;
     animation: exerciseMove 2s ease-in-out infinite;
   }
   
   @keyframes exerciseMove {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.1) rotate(-5deg); }
-    50% { transform: scale(1.2) rotate(0deg); }
-    75% { transform: scale(1.1) rotate(5deg); }
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
   }
 `;
 
+const SectionTitle = styled.h4`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 1.5rem 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 const InstructionsList = styled.ol`
-  margin: 1.5rem 0;
+  margin: 0 0 1.5rem 0;
   padding-left: 1.5rem;
   
   li {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     line-height: 1.6;
-    color: #444;
+    color: #4b5563;
+    font-size: 0.9rem;
   }
 `;
 
 const TipsList = styled.ul`
-  background: #e8f5e8;
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  margin: 1.5rem 0;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 0 0 1.5rem 0;
   
   li {
     margin-bottom: 0.5rem;
-    color: #2d5a2d;
+    color: #0c4a6e;
     line-height: 1.5;
+    font-size: 0.9rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 `;
 
 const SetLogger = styled.div`
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 15px;
-  margin-top: 2rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+`;
+
+const SetLoggerHeader = styled.div`
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+`;
+
+const SetLoggerContent = styled.div`
+  padding: 1rem;
 `;
 
 const SetRow = styled.div`
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 60px;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
   padding: 0.75rem;
   background: white;
-  border-radius: 10px;
-  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
   
   &:last-child {
     margin-bottom: 0;
@@ -402,83 +415,129 @@ const SetRow = styled.div`
 
 const SetInput = styled.input`
   padding: 0.5rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 0.9rem;
   
   &:focus {
-    border-color: #667eea;
+    border-color: #3b82f6;
     outline: none;
+    box-shadow: 0 0 0 1px #3b82f6;
   }
 `;
 
 const AddSetButton = styled.button`
-  background: #28a745;
+  background: #10b981;
   color: white;
   border: none;
   padding: 0.75rem;
-  border-radius: 10px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
+  width: 100%;
+  font-size: 0.9rem;
   
   &:hover {
-    background: #218838;
+    background: #059669;
   }
 `;
 
 const FinishButton = styled.button`
   width: 100%;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: #3b82f6;
   color: white;
   border: none;
   padding: 1rem;
-  border-radius: 15px;
-  font-weight: 700;
-  font-size: 1.1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  margin-top: 1.5rem;
-  transition: all 0.3s ease;
+  margin-top: 1rem;
+  transition: background 0.15s ease;
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+    background: #2563eb;
   }
 `;
 
 const RestTimer = styled.div<{ $active: boolean }>`
-  background: ${props => props.$active ? 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)' : '#f8f9fa'};
-  color: ${props => props.$active ? 'white' : '#333'};
+  background: ${props => props.$active ? '#dc2626' : '#f9fafb'};
+  color: ${props => props.$active ? 'white' : '#1f2937'};
   padding: 1rem;
-  border-radius: 15px;
+  border-radius: 8px;
   text-align: center;
   margin: 1rem 0;
+  border: 1px solid ${props => props.$active ? '#dc2626' : '#e5e7eb'};
   
   .timer {
     font-size: 2rem;
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 0.5rem;
   }
   
   .controls {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.75rem;
     margin-top: 1rem;
     
     button {
-      background: rgba(255, 255, 255, 0.2);
-      color: ${props => props.$active ? 'white' : '#333'};
+      background: ${props => props.$active ? 'rgba(255, 255, 255, 0.2)' : '#e5e7eb'};
+      color: ${props => props.$active ? 'white' : '#1f2937'};
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
       
       &:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: ${props => props.$active ? 'rgba(255, 255, 255, 0.3)' : '#d1d5db'};
       }
     }
+  }
+`;
+
+const SearchSection = styled.div`
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+`;
+
+const BackButton = styled.button`
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+  
+  &:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
   }
 `;
 
@@ -500,6 +559,7 @@ const Gym: React.FC = () => {
   const [currentRestTime, setCurrentRestTime] = useState(90);
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Rest timer effect
   useEffect(() => {
@@ -596,20 +656,28 @@ const Gym: React.FC = () => {
     return animations[category] || '💪';
   };
 
+  // Filter exercises based on search term
+  const filteredExercises = selectedBodyPart 
+    ? EXERCISE_CATEGORIES[selectedBodyPart].exercises.filter(exercise =>
+        exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        exercise.primaryMuscles.some(muscle => muscle.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : [];
+
   return (
     <Container>
       <Header>
-        <h1>🏋️‍♂️ Gym Workout Tracker</h1>
-        <p>Professional strength training with 50+ exercises per body part</p>
+        <h1>🏋️‍♂️ Workout</h1>
+        <p>Track your strength training progress</p>
       </Header>
 
       <TabSection>
         <TabHeader>
           <Tab $active={activeTab === 'browse'} onClick={() => setActiveTab('browse')}>
-            💪 Browse Exercises
+            Exercises
           </Tab>
           <Tab $active={activeTab === 'session'} onClick={() => setActiveTab('session')}>
-            🎯 Current Session
+            Workout
           </Tab>
         </TabHeader>
 
@@ -628,7 +696,7 @@ const Gym: React.FC = () => {
                         <span className="emoji">{category.emoji}</span>
                         {category.name}
                       </h3>
-                      <span className="count">{category.exercises.length} exercises</span>
+                      <span className="count">{category.exercises.length}</span>
                     </CardHeader>
                     <ExercisesList>
                       {category.exercises.slice(0, 3).map((exercise) => (
@@ -645,8 +713,8 @@ const Gym: React.FC = () => {
                         </ExerciseItem>
                       ))}
                       {category.exercises.length > 3 && (
-                        <div style={{textAlign: 'center', padding: '0.5rem', color: '#666', fontSize: '0.9rem'}}>
-                          +{category.exercises.length - 3} more exercises
+                        <div style={{textAlign: 'center', padding: '0.5rem', color: '#6b7280', fontSize: '0.8rem'}}>
+                          +{category.exercises.length - 3} more
                         </div>
                       )}
                     </ExercisesList>
@@ -654,46 +722,55 @@ const Gym: React.FC = () => {
                 ))}
               </BodyPartGrid>
             ) : (
-              <div>
-                <div style={{marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                  <button
-                    onClick={() => setSelectedBodyPart(null)}
-                    style={{
-                      background: '#667eea',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '8px',
-                      cursor: 'pointer'
-                    }}
-                  >
+              <>
+                <div style={{padding: '1rem', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                  <BackButton onClick={() => {
+                    setSelectedBodyPart(null);
+                    setSearchTerm('');
+                  }}>
                     ← Back
-                  </button>
-                  <h2 style={{margin: 0, color: '#333'}}>
-                    {EXERCISE_CATEGORIES[selectedBodyPart].emoji} {EXERCISE_CATEGORIES[selectedBodyPart].name} Exercises
+                  </BackButton>
+                  <h2 style={{margin: 0, color: '#1f2937', fontSize: '1.25rem', fontWeight: '600'}}>
+                    {EXERCISE_CATEGORIES[selectedBodyPart].emoji} {EXERCISE_CATEGORIES[selectedBodyPart].name}
                   </h2>
                 </div>
                 
-                <ExercisesList>
-                  {EXERCISE_CATEGORIES[selectedBodyPart].exercises.map((exercise) => (
-                    <ExerciseItem key={exercise.id}>
-                      <ExerciseInfo>
-                        <div className="name">{exercise.name}</div>
-                        <div className="details">
-                          <span className={`difficulty ${exercise.difficulty}`}>
-                            {exercise.difficulty}
-                          </span>
-                          <span>{exercise.equipment}</span>
-                          <span>{exercise.primaryMuscles.join(', ')}</span>
-                        </div>
-                      </ExerciseInfo>
-                      <ActionButton onClick={() => handleExerciseClick(exercise)}>
-                        Start Exercise
-                      </ActionButton>
-                    </ExerciseItem>
-                  ))}
-                </ExercisesList>
-              </div>
+                <SearchSection>
+                  <SearchInput
+                    type="text"
+                    placeholder="Search exercises..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </SearchSection>
+                
+                <div style={{padding: '1rem'}}>
+                  <ExercisesList>
+                    {filteredExercises.map((exercise) => (
+                      <ExerciseItem key={exercise.id}>
+                        <ExerciseInfo>
+                          <div className="name">{exercise.name}</div>
+                          <div className="details">
+                            <span className={`difficulty ${exercise.difficulty}`}>
+                              {exercise.difficulty}
+                            </span>
+                            <span>{exercise.equipment}</span>
+                            <span>{exercise.primaryMuscles.join(', ')}</span>
+                          </div>
+                        </ExerciseInfo>
+                        <ActionButton onClick={() => handleExerciseClick(exercise)}>
+                          Start
+                        </ActionButton>
+                      </ExerciseItem>
+                    ))}
+                    {filteredExercises.length === 0 && searchTerm && (
+                      <div style={{textAlign: 'center', padding: '2rem', color: '#6b7280'}}>
+                        No exercises found matching "{searchTerm}"
+                      </div>
+                    )}
+                  </ExercisesList>
+                </div>
+              </>
             )}
           </>
         )}
@@ -701,56 +778,42 @@ const Gym: React.FC = () => {
         {activeTab === 'session' && (
           <WorkoutSession>
             <SessionHeader>
-              <h3>💪 Current Workout Session</h3>
-              <SessionStats>
-                <StatItem>
-                  <span className="value">{workoutStarted ? '🔥' : '⏸️'}</span>
-                  <span className="label">Status</span>
-                </StatItem>
-                <StatItem>
-                  <span className="value">0</span>
-                  <span className="label">Exercises</span>
-                </StatItem>
-                <StatItem>
-                  <span className="value">0</span>
-                  <span className="label">Sets</span>
-                </StatItem>
-                <StatItem>
-                  <span className="value">0</span>
-                  <span className="label">Calories</span>
-                </StatItem>
-              </SessionStats>
+              <h3>🏋️‍♂️ Current Workout</h3>
             </SessionHeader>
             
-            <div style={{position: 'relative', zIndex: 1, textAlign: 'center', padding: '2rem'}}>
-              <h4 style={{margin: '0 0 1rem 0', fontSize: '1.2rem'}}>Ready to start your workout?</h4>
-              <p style={{opacity: 0.9, marginBottom: '2rem'}}>
-                Browse exercises and start logging your sets to begin your session
+            <SessionStats>
+              <StatItem>
+                <span className="value">{workoutStarted ? 'Active' : 'Ready'}</span>
+                <span className="label">Status</span>
+              </StatItem>
+              <StatItem>
+                <span className="value">0</span>
+                <span className="label">Exercises</span>
+              </StatItem>
+              <StatItem>
+                <span className="value">0</span>
+                <span className="label">Sets</span>
+              </StatItem>
+              <StatItem>
+                <span className="value">0</span>
+                <span className="label">Volume</span>
+              </StatItem>
+            </SessionStats>
+            
+            <div style={{textAlign: 'center', padding: '3rem 1rem'}}>
+              <h4 style={{margin: '0 0 0.5rem 0', fontSize: '1.1rem', fontWeight: '500', color: '#1f2937'}}>Ready to start your workout?</h4>
+              <p style={{color: '#6b7280', marginBottom: '2rem', fontSize: '0.95rem'}}>
+                Browse exercises and start logging your sets
               </p>
-              <button
+              <ActionButton
                 onClick={() => setActiveTab('browse')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  padding: '1rem 2rem',
-                  borderRadius: '15px',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.95rem'
                 }}
               >
-                🚀 Browse Exercises
-              </button>
+                Browse Exercises
+              </ActionButton>
             </div>
           </WorkoutSession>
         )}
@@ -764,30 +827,30 @@ const Gym: React.FC = () => {
           </ModalHeader>
           
           {selectedExercise && (
-            <>
+            <ModalBody>
               <ExerciseAnimation>
                 <div className="animation-placeholder">
                   {getAnimationEmoji(selectedExercise.category)}
                 </div>
               </ExerciseAnimation>
               
-              <div style={{marginBottom: '2rem'}}>
-                <h4>Instructions:</h4>
-                <InstructionsList>
-                  {selectedExercise.instructions.map((instruction, index) => (
-                    <li key={index}>{instruction}</li>
-                  ))}
-                </InstructionsList>
-              </div>
+              <SectionTitle>
+                📋 Instructions
+              </SectionTitle>
+              <InstructionsList>
+                {selectedExercise.instructions.map((instruction, index) => (
+                  <li key={index}>{instruction}</li>
+                ))}
+              </InstructionsList>
               
-              <div>
-                <h4>💡 Pro Tips:</h4>
-                <TipsList>
-                  {selectedExercise.tips.map((tip, index) => (
-                    <li key={index}>{tip}</li>
-                  ))}
-                </TipsList>
-              </div>
+              <SectionTitle>
+                💡 Tips
+              </SectionTitle>
+              <TipsList>
+                {selectedExercise.tips.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </TipsList>
 
               <RestTimer $active={isResting}>
                 <div className="timer">{formatTime(currentRestTime)}</div>
@@ -805,9 +868,12 @@ const Gym: React.FC = () => {
               </RestTimer>
               
               <SetLogger>
-                <h4 style={{marginBottom: '1rem'}}>📊 Log Your Sets</h4>
-                <div style={{marginBottom: '1rem'}}>
-                  <SetRow style={{background: '#667eea', color: 'white', fontWeight: 'bold'}}>
+                <SetLoggerHeader>
+                  <h4>📃 Log Sets</h4>
+                </SetLoggerHeader>
+                
+                <SetLoggerContent>
+                  <SetRow style={{background: '#f3f4f6', fontWeight: '600', fontSize: '0.8rem', color: '#374151'}}>
                     <div>Set</div>
                     <div>Reps</div>
                     <div>Weight (kg)</div>
@@ -816,7 +882,7 @@ const Gym: React.FC = () => {
                   </SetRow>
                   {sets.map((set, index) => (
                     <SetRow key={index}>
-                      <div>{index + 1}</div>
+                      <div style={{fontWeight: '500', color: '#6b7280'}}>{index + 1}</div>
                       <SetInput
                         type="number"
                         placeholder="0"
@@ -840,17 +906,18 @@ const Gym: React.FC = () => {
                         type="checkbox"
                         checked={set.completed}
                         onChange={(e) => updateSet(index, 'completed', e.target.checked)}
-                        style={{transform: 'scale(1.2)'}}
+                        style={{transform: 'scale(1.1)', accentColor: '#3b82f6'}}
                       />
                     </SetRow>
                   ))}
-                </div>
-                <AddSetButton onClick={addSet}>+ Add Set</AddSetButton>
-                <FinishButton onClick={finishExercise}>
-                  🎯 Finish Exercise ({sets.filter(s => s.completed).length} sets completed)
-                </FinishButton>
+                  
+                  <AddSetButton onClick={addSet}>+ Add Set</AddSetButton>
+                  <FinishButton onClick={finishExercise}>
+                    Complete Exercise ({sets.filter(s => s.completed).length} sets)
+                  </FinishButton>
+                </SetLoggerContent>
               </SetLogger>
-            </>
+            </ModalBody>
           )}
         </ModalContent>
       </Modal>

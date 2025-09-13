@@ -1102,6 +1102,278 @@ export const GYM_EXERCISES_DATABASE: GymExercise[] = [
       'Pressing before fully standing'
     ],
     variations: ['Barbell Thrusters', 'Single-Arm Thrusters', 'Goblet Thrusters']
+  },
+
+  // TRAPS EXERCISES (50+ variations)
+  {
+    id: 'traps_1',
+    name: 'Barbell Shrugs',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius'],
+    secondaryMuscles: ['Levator Scapulae'],
+    equipment: 'barbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Stand upright holding barbell with overhand grip',
+      'Let arms hang naturally at sides',
+      'Keep back straight and core engaged',
+      'Lift shoulders straight up toward ears',
+      'Hold briefly at top, then lower with control'
+    ],
+    tips: [
+      'Don\'t roll shoulders - lift straight up',
+      'Squeeze shoulder blades at the top',
+      'Keep head in neutral position'
+    ],
+    commonMistakes: [
+      'Rolling shoulders forward and backward',
+      'Using too much weight',
+      'Not holding the contraction'
+    ],
+    variations: ['Behind-the-Back Barbell Shrugs', 'Smith Machine Shrugs', 'Wide-Grip Shrugs']
+  },
+  {
+    id: 'traps_2',
+    name: 'Dumbbell Shrugs',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius'],
+    secondaryMuscles: ['Levator Scapulae', 'Rhomboids'],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Hold dumbbells at sides with neutral grip',
+      'Stand with feet shoulder-width apart',
+      'Keep arms straight throughout movement',
+      'Shrug shoulders up as high as possible',
+      'Lower slowly to starting position'
+    ],
+    tips: [
+      'Focus on lifting with traps, not arms',
+      'Keep chest up and shoulders back',
+      'Use full range of motion'
+    ],
+    commonMistakes: [
+      'Bending elbows during movement',
+      'Not going full range of motion',
+      'Using momentum instead of muscle control'
+    ],
+    variations: ['Single-Arm Dumbbell Shrugs', 'Incline Dumbbell Shrugs', 'Seated Dumbbell Shrugs']
+  },
+  {
+    id: 'traps_3',
+    name: 'Cable Shrugs',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius'],
+    secondaryMuscles: ['Middle Trapezius', 'Rhomboids'],
+    equipment: 'cable',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Set cable to lowest position with straight bar',
+      'Grip bar with overhand grip, shoulder-width apart',
+      'Stand upright with slight forward lean',
+      'Shrug shoulders up and slightly back',
+      'Lower with control maintaining tension'
+    ],
+    tips: [
+      'Maintain constant tension from cable',
+      'Focus on squeezing shoulder blades together',
+      'Don\'t let weight slam down'
+    ],
+    commonMistakes: [
+      'Standing too far from cable machine',
+      'Not maintaining constant tension',
+      'Rushing the negative portion'
+    ],
+    variations: ['Single-Arm Cable Shrugs', 'Behind-the-Back Cable Shrugs', 'High Cable Shrugs']
+  },
+  {
+    id: 'traps_4',
+    name: 'Upright Rows',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius', 'Middle Trapezius'],
+    secondaryMuscles: ['Rear Deltoids', 'Rhomboids'],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold barbell with narrow overhand grip',
+      'Let bar hang at arm\'s length',
+      'Pull bar straight up along body',
+      'Lift elbows as high as possible',
+      'Lower bar slowly to starting position'
+    ],
+    tips: [
+      'Lead with elbows, not hands',
+      'Keep bar close to body throughout',
+      'Don\'t go higher than shoulder level if it causes pain'
+    ],
+    commonMistakes: [
+      'Using too wide a grip',
+      'Pulling bar away from body',
+      'Going too high and causing shoulder impingement'
+    ],
+    variations: ['Dumbbell Upright Rows', 'Cable Upright Rows', 'Wide-Grip Upright Rows']
+  },
+  {
+    id: 'traps_5',
+    name: 'Face Pulls',
+    category: 'traps',
+    primaryMuscles: ['Middle Trapezius', 'Rear Deltoids'],
+    secondaryMuscles: ['Rhomboids', 'External Rotators'],
+    equipment: 'cable',
+    difficulty: 'Beginner',
+    instructions: [
+      'Set cable to face height with rope attachment',
+      'Grab rope with overhand grip',
+      'Step back to create tension',
+      'Pull rope toward face, separating hands',
+      'Focus on squeezing shoulder blades together'
+    ],
+    tips: [
+      'Pull rope apart as you pull back',
+      'Keep elbows high throughout movement',
+      'Focus on rear delt and trap contraction'
+    ],
+    commonMistakes: [
+      'Pulling too low toward chest',
+      'Not separating rope at the end',
+      'Using too much weight'
+    ],
+    variations: ['Single-Arm Face Pulls', 'High Face Pulls', 'Resistance Band Face Pulls']
+  },
+  {
+    id: 'traps_6',
+    name: 'Power Shrugs',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius'],
+    secondaryMuscles: ['Levator Scapulae', 'Rhomboids'],
+    equipment: 'barbell',
+    difficulty: 'Advanced',
+    instructions: [
+      'Set up like deadlift with heavy weight',
+      'Lift bar to hip level',
+      'Explosively shrug shoulders up',
+      'Rise up on toes for extra height',
+      'Lower weight under control'
+    ],
+    tips: [
+      'Use straps for heavy weights',
+      'Generate power from legs and hips',
+      'Focus on explosive upward movement'
+    ],
+    commonMistakes: [
+      'Not using full body power',
+      'Going too heavy too soon',
+      'Not controlling the descent'
+    ],
+    variations: ['Dumbbell Power Shrugs', 'Trap Bar Power Shrugs', 'Hang Clean Shrugs']
+  },
+  {
+    id: 'traps_7',
+    name: 'Y-Raises',
+    category: 'traps',
+    primaryMuscles: ['Lower Trapezius'],
+    secondaryMuscles: ['Rear Deltoids', 'Rhomboids'],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Lie face down on incline bench',
+      'Hold light dumbbells with thumbs up',
+      'Raise arms to form Y shape overhead',
+      'Focus on squeezing lower traps',
+      'Lower with control'
+    ],
+    tips: [
+      'Use very light weight - focus on form',
+      'Think about pulling shoulder blades down and back',
+      'Keep thumbs pointing up'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Not engaging lower traps',
+      'Moving too fast'
+    ],
+    variations: ['Prone Y-Raises', 'Standing Y-Raises', 'Cable Y-Raises']
+  },
+  {
+    id: 'traps_8',
+    name: 'Farmer\'s Walk',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius', 'Middle Trapezius'],
+    secondaryMuscles: ['Forearms', 'Core', 'Glutes'],
+    equipment: 'dumbbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Pick up heavy dumbbells or farmer\'s walk handles',
+      'Stand tall with shoulders back',
+      'Walk forward with controlled steps',
+      'Keep core engaged throughout',
+      'Maintain upright posture'
+    ],
+    tips: [
+      'Keep shoulders pulled back and down',
+      'Take controlled steps, don\'t rush',
+      'Breathe normally throughout walk'
+    ],
+    commonMistakes: [
+      'Letting shoulders roll forward',
+      'Taking too long steps',
+      'Not engaging core'
+    ],
+    variations: ['Single-Arm Farmer\'s Walk', 'Overhead Carry', 'Trap Bar Farmer\'s Walk']
+  },
+  {
+    id: 'traps_9',
+    name: 'High Pulls',
+    category: 'traps',
+    primaryMuscles: ['Upper Trapezius', 'Middle Trapezius'],
+    secondaryMuscles: ['Rear Deltoids', 'Biceps'],
+    equipment: 'barbell',
+    difficulty: 'Advanced',
+    instructions: [
+      'Start in deadlift position',
+      'Explosively extend hips and knees',
+      'As bar reaches hip level, shrug and pull high',
+      'Keep bar close to body throughout',
+      'Lower with control'
+    ],
+    tips: [
+      'Focus on explosive hip extension first',
+      'Pull elbows high and outside',
+      'Think "jump and shrug"'
+    ],
+    commonMistakes: [
+      'Pulling with arms too early',
+      'Not extending hips explosively',
+      'Letting bar drift away from body'
+    ],
+    variations: ['Dumbbell High Pulls', 'Hang High Pulls', 'Snatch Grip High Pulls']
+  },
+  {
+    id: 'traps_10',
+    name: 'Prone T-Raises',
+    category: 'traps',
+    primaryMuscles: ['Middle Trapezius'],
+    secondaryMuscles: ['Rear Deltoids', 'Rhomboids'],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Lie face down on incline bench',
+      'Hold light dumbbells with arms extended',
+      'Raise arms out to sides forming T shape',
+      'Squeeze shoulder blades together',
+      'Lower slowly to starting position'
+    ],
+    tips: [
+      'Use light weights - this is about activation',
+      'Focus on squeezing middle traps',
+      'Keep arms straight throughout'
+    ],
+    commonMistakes: [
+      'Using too heavy weights',
+      'Not squeezing shoulder blades',
+      'Rushing the movement'
+    ],
+    variations: ['Standing T-Raises', 'Cable T-Raises', 'Resistance Band T-Raises']
   }
 ];
 
