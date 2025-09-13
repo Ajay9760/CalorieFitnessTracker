@@ -1374,6 +1374,1137 @@ export const GYM_EXERCISES_DATABASE: GymExercise[] = [
       'Rushing the movement'
     ],
     variations: ['Standing T-Raises', 'Cable T-Raises', 'Resistance Band T-Raises']
+  },
+
+  // ADDITIONAL QUADRICEPS EXERCISES (5 more)
+  {
+    id: 'quadriceps_2',
+    name: 'Barbell Back Squats',
+    category: 'quadriceps',
+    primaryMuscles: ['Quadriceps'],
+    secondaryMuscles: ['Glutes', 'Core'],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Position barbell on upper back',
+      'Stand with feet shoulder-width apart',
+      'Lower body by bending knees and hips',
+      'Keep chest up and back straight',
+      'Push through heels to return to standing'
+    ],
+    tips: [
+      'Keep knees aligned with toes',
+      'Descend until thighs are parallel to ground',
+      'Maintain neutral spine throughout'
+    ],
+    commonMistakes: [
+      'Knees caving inward',
+      'Leaning too far forward',
+      'Not going deep enough'
+    ],
+    variations: ['Front Squats', 'Goblet Squats', 'Bulgarian Split Squats']
+  },
+  {
+    id: 'quadriceps_3',
+    name: 'Walking Lunges',
+    category: 'quadriceps',
+    primaryMuscles: ['Quadriceps'],
+    secondaryMuscles: ['Glutes', 'Hamstrings'],
+    equipment: 'dumbbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold dumbbells at sides',
+      'Step forward into lunge position',
+      'Lower back knee toward ground',
+      'Push off front foot to step forward',
+      'Alternate legs with each step'
+    ],
+    tips: [
+      'Keep torso upright throughout',
+      'Take large enough steps',
+      'Control the descent'
+    ],
+    commonMistakes: [
+      'Taking steps that are too small',
+      'Letting front knee go past toes',
+      'Bouncing in the bottom position'
+    ],
+    variations: ['Reverse Lunges', 'Lateral Lunges', 'Curtsy Lunges']
+  },
+  {
+    id: 'quadriceps_4',
+    name: 'Leg Press',
+    category: 'quadriceps',
+    primaryMuscles: ['Quadriceps'],
+    secondaryMuscles: ['Glutes'],
+    equipment: 'machine',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit in leg press machine',
+      'Place feet on platform shoulder-width apart',
+      'Lower weight by bending knees to 90 degrees',
+      'Press weight back up through heels',
+      'Don\'t lock knees completely at top'
+    ],
+    tips: [
+      'Keep back pressed against pad',
+      'Control the negative portion',
+      'Breathe out on the press'
+    ],
+    commonMistakes: [
+      'Going too deep and rounding back',
+      'Placing feet too high or low',
+      'Locking knees aggressively'
+    ],
+    variations: ['Single-Leg Press', 'Narrow Stance Press', 'Wide Stance Press']
+  },
+  {
+    id: 'quadriceps_5',
+    name: 'Leg Extensions',
+    category: 'quadriceps',
+    primaryMuscles: ['Quadriceps'],
+    secondaryMuscles: [],
+    equipment: 'machine',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit in leg extension machine',
+      'Position ankles behind lower pad',
+      'Extend legs until fully straight',
+      'Pause briefly at top',
+      'Lower with control'
+    ],
+    tips: [
+      'Squeeze quads at the top',
+      'Don\'t swing or use momentum',
+      'Adjust seat for proper alignment'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Not going through full range of motion',
+      'Jerky movements'
+    ],
+    variations: ['Single-Leg Extensions', 'Toes-Out Extensions', 'Toes-In Extensions']
+  },
+  {
+    id: 'quadriceps_6',
+    name: 'Jump Squats',
+    category: 'quadriceps',
+    primaryMuscles: ['Quadriceps'],
+    secondaryMuscles: ['Glutes', 'Core'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Start in squat position',
+      'Lower into squat',
+      'Explosively jump up as high as possible',
+      'Land softly back in squat position',
+      'Immediately go into next rep'
+    ],
+    tips: [
+      'Land with soft knees',
+      'Use arms to generate momentum',
+      'Focus on explosive power'
+    ],
+    commonMistakes: [
+      'Landing with stiff legs',
+      'Not squatting deep enough',
+      'Poor landing mechanics'
+    ],
+    variations: ['Weighted Jump Squats', 'Single-Leg Jump Squats', 'Box Jump Squats']
+  },
+
+  // ADDITIONAL HAMSTRING EXERCISES (5 more)
+  {
+    id: 'hamstrings_2',
+    name: 'Romanian Deadlifts',
+    category: 'hamstrings',
+    primaryMuscles: ['Hamstrings'],
+    secondaryMuscles: ['Glutes', 'Lower Back'],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold barbell with overhand grip',
+      'Stand with feet hip-width apart',
+      'Push hips back and lower bar',
+      'Keep bar close to legs',
+      'Feel stretch in hamstrings, then return'
+    ],
+    tips: [
+      'Keep knees slightly bent',
+      'Lead with hips, not knees',
+      'Maintain neutral spine'
+    ],
+    commonMistakes: [
+      'Rounding the back',
+      'Bending knees too much',
+      'Not feeling stretch in hamstrings'
+    ],
+    variations: ['Dumbbell RDLs', 'Single-Leg RDLs', 'Stiff-Leg Deadlifts']
+  },
+  {
+    id: 'hamstrings_3',
+    name: 'Lying Leg Curls',
+    category: 'hamstrings',
+    primaryMuscles: ['Hamstrings'],
+    secondaryMuscles: [],
+    equipment: 'machine',
+    difficulty: 'Beginner',
+    instructions: [
+      'Lie face down on leg curl machine',
+      'Position ankles under pad',
+      'Curl heels toward glutes',
+      'Squeeze hamstrings at top',
+      'Lower with control'
+    ],
+    tips: [
+      'Don\'t lift hips off pad',
+      'Full range of motion',
+      'Control the negative'
+    ],
+    commonMistakes: [
+      'Using momentum',
+      'Not going through full ROM',
+      'Lifting hips during curl'
+    ],
+    variations: ['Seated Leg Curls', 'Standing Single-Leg Curls', 'Nordic Curls']
+  },
+  {
+    id: 'hamstrings_4',
+    name: 'Good Mornings',
+    category: 'hamstrings',
+    primaryMuscles: ['Hamstrings'],
+    secondaryMuscles: ['Glutes', 'Lower Back'],
+    equipment: 'barbell',
+    difficulty: 'Advanced',
+    instructions: [
+      'Position barbell on upper back',
+      'Stand with feet shoulder-width apart',
+      'Hinge at hips and lean forward',
+      'Keep back straight throughout',
+      'Return to upright position'
+    ],
+    tips: [
+      'Start with light weight',
+      'Focus on hip hinge movement',
+      'Keep core tight'
+    ],
+    commonMistakes: [
+      'Rounding the back',
+      'Going too low too fast',
+      'Using too much weight initially'
+    ],
+    variations: ['Seated Good Mornings', 'Dumbbell Good Mornings', 'Safety Bar Good Mornings']
+  },
+  {
+    id: 'hamstrings_5',
+    name: 'Swiss Ball Leg Curls',
+    category: 'hamstrings',
+    primaryMuscles: ['Hamstrings'],
+    secondaryMuscles: ['Glutes', 'Core'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Lie on back with heels on swiss ball',
+      'Lift hips into bridge position',
+      'Roll ball toward glutes with heels',
+      'Extend legs back out',
+      'Maintain bridge throughout'
+    ],
+    tips: [
+      'Keep hips elevated',
+      'Focus on hamstring contraction',
+      'Control both directions'
+    ],
+    commonMistakes: [
+      'Dropping hips during movement',
+      'Using momentum',
+      'Not engaging core'
+    ],
+    variations: ['Single-Leg Swiss Ball Curls', 'Swiss Ball Bridge Hold', 'Reverse Swiss Ball Curls']
+  },
+  {
+    id: 'hamstrings_6',
+    name: 'Kettlebell Swings',
+    category: 'hamstrings',
+    primaryMuscles: ['Hamstrings'],
+    secondaryMuscles: ['Glutes', 'Core'],
+    equipment: 'kettlebell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Stand with feet wider than shoulders',
+      'Hold kettlebell with both hands',
+      'Hinge at hips and swing bell back',
+      'Drive hips forward explosively',
+      'Let bell swing up to shoulder height'
+    ],
+    tips: [
+      'Power comes from hips, not arms',
+      'Keep core engaged',
+      'Don\'t squat - hinge at hips'
+    ],
+    commonMistakes: [
+      'Squatting instead of hinging',
+      'Using arms to lift weight',
+      'Not engaging glutes and hamstrings'
+    ],
+    variations: ['Single-Arm Swings', 'American Swings', 'Alternating Swings']
+  },
+
+  // ADDITIONAL BICEP EXERCISES (4 more)
+  {
+    id: 'biceps_3',
+    name: 'Hammer Curls',
+    category: 'biceps',
+    primaryMuscles: ['Biceps', 'Brachialis'],
+    secondaryMuscles: ['Forearms'],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Hold dumbbells with neutral grip (palms facing each other)',
+      'Stand with arms at sides',
+      'Curl weights up keeping neutral grip',
+      'Squeeze biceps at top',
+      'Lower with control'
+    ],
+    tips: [
+      'Keep elbows stationary',
+      'Don\'t rotate wrists',
+      'Focus on bicep and brachialis contraction'
+    ],
+    commonMistakes: [
+      'Swinging the weights',
+      'Using momentum',
+      'Not keeping neutral grip'
+    ],
+    variations: ['Alternating Hammer Curls', 'Cross-Body Hammer Curls', 'Cable Hammer Curls']
+  },
+  {
+    id: 'biceps_4',
+    name: 'Preacher Curls',
+    category: 'biceps',
+    primaryMuscles: ['Biceps'],
+    secondaryMuscles: [],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Sit at preacher bench with chest against pad',
+      'Hold barbell with underhand grip',
+      'Start with arms slightly bent',
+      'Curl weight up squeezing biceps',
+      'Lower slowly with control'
+    ],
+    tips: [
+      'Don\'t fully extend arms at bottom',
+      'Keep wrists straight',
+      'Focus on slow negative'
+    ],
+    commonMistakes: [
+      'Extending arms too far',
+      'Using too much weight',
+      'Not controlling the negative'
+    ],
+    variations: ['Dumbbell Preacher Curls', 'Single-Arm Preacher Curls', 'Cable Preacher Curls']
+  },
+  {
+    id: 'biceps_5',
+    name: 'Cable Curls',
+    category: 'biceps',
+    primaryMuscles: ['Biceps'],
+    secondaryMuscles: ['Forearms'],
+    equipment: 'cable',
+    difficulty: 'Beginner',
+    instructions: [
+      'Stand facing cable machine with low pulley',
+      'Grab bar with underhand grip',
+      'Keep elbows at sides',
+      'Curl bar up to chest level',
+      'Lower with control maintaining tension'
+    ],
+    tips: [
+      'Maintain constant tension',
+      'Don\'t let weight stack touch',
+      'Keep core engaged'
+    ],
+    commonMistakes: [
+      'Moving elbows forward',
+      'Using body momentum',
+      'Not maintaining tension at bottom'
+    ],
+    variations: ['Single-Arm Cable Curls', 'High Cable Curls', 'Rope Cable Curls']
+  },
+  {
+    id: 'biceps_6',
+    name: 'Concentration Curls',
+    category: 'biceps',
+    primaryMuscles: ['Biceps'],
+    secondaryMuscles: [],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit on bench with dumbbell in one hand',
+      'Brace elbow against inner thigh',
+      'Let arm hang with slight bend',
+      'Curl weight up focusing on bicep',
+      'Lower slowly and repeat'
+    ],
+    tips: [
+      'Really focus on mind-muscle connection',
+      'Don\'t swing or cheat',
+      'Full range of motion'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Not bracing elbow properly',
+      'Rushing the movement'
+    ],
+    variations: ['Standing Concentration Curls', 'Cable Concentration Curls', 'Incline Concentration Curls']
+  },
+
+  // ADDITIONAL TRICEP EXERCISES (4 more)
+  {
+    id: 'triceps_3',
+    name: 'Close-Grip Bench Press',
+    category: 'triceps',
+    primaryMuscles: ['Triceps'],
+    secondaryMuscles: ['Chest', 'Shoulders'],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Lie on bench with narrow grip on barbell',
+      'Keep elbows close to body',
+      'Lower bar to chest with control',
+      'Press up focusing on tricep extension',
+      'Keep elbows tucked throughout'
+    ],
+    tips: [
+      'Don\'t go too narrow with grip',
+      'Keep elbows tucked',
+      'Focus on tricep engagement'
+    ],
+    commonMistakes: [
+      'Grip too narrow causing wrist pain',
+      'Flaring elbows out',
+      'Using too much weight'
+    ],
+    variations: ['Dumbbell Close-Grip Press', 'Incline Close-Grip Press', 'Smith Machine Close-Grip']
+  },
+  {
+    id: 'triceps_4',
+    name: 'Overhead Tricep Extension',
+    category: 'triceps',
+    primaryMuscles: ['Triceps'],
+    secondaryMuscles: ['Shoulders'],
+    equipment: 'dumbbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold dumbbell with both hands overhead',
+      'Keep elbows pointing forward',
+      'Lower weight behind head',
+      'Extend arms back to starting position',
+      'Keep elbows stationary'
+    ],
+    tips: [
+      'Keep elbows close together',
+      'Don\'t go too heavy initially',
+      'Control the stretch'
+    ],
+    commonMistakes: [
+      'Flaring elbows out',
+      'Going too low and straining shoulders',
+      'Using momentum'
+    ],
+    variations: ['Single-Arm Overhead Extension', 'Cable Overhead Extension', 'Seated Overhead Extension']
+  },
+  {
+    id: 'triceps_5',
+    name: 'Tricep Kickbacks',
+    category: 'triceps',
+    primaryMuscles: ['Triceps'],
+    secondaryMuscles: [],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Bend over with dumbbell in one hand',
+      'Bring elbow to side and keep it there',
+      'Extend arm back squeezing tricep',
+      'Return to starting position',
+      'Keep elbow stationary throughout'
+    ],
+    tips: [
+      'Really squeeze tricep at extension',
+      'Keep elbow locked in position',
+      'Use light weight and focus on form'
+    ],
+    commonMistakes: [
+      'Moving the elbow',
+      'Using too much weight',
+      'Not fully extending arm'
+    ],
+    variations: ['Cable Kickbacks', 'Both Arms Kickbacks', 'Incline Kickbacks']
+  },
+  {
+    id: 'triceps_6',
+    name: 'Diamond Push-ups',
+    category: 'triceps',
+    primaryMuscles: ['Triceps'],
+    secondaryMuscles: ['Chest', 'Shoulders'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Get in push-up position',
+      'Make diamond shape with hands',
+      'Lower body keeping elbows close',
+      'Push up focusing on tricep extension',
+      'Keep core tight throughout'
+    ],
+    tips: [
+      'Keep elbows close to body',
+      'Maintain straight body line',
+      'Focus on tricep engagement'
+    ],
+    commonMistakes: [
+      'Flaring elbows out',
+      'Not going deep enough',
+      'Poor core stability'
+    ],
+    variations: ['Incline Diamond Push-ups', 'Decline Diamond Push-ups', 'Single-Arm Diamond Push-ups']
+  },
+
+  // ADDITIONAL SHOULDER EXERCISES (4 more)
+  {
+    id: 'shoulders_3',
+    name: 'Lateral Raises',
+    category: 'shoulders',
+    primaryMuscles: ['Lateral Deltoids'],
+    secondaryMuscles: [],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Stand with dumbbells at sides',
+      'Raise arms out to sides',
+      'Lift until arms are parallel to ground',
+      'Lower with control',
+      'Keep slight bend in elbows'
+    ],
+    tips: [
+      'Lead with pinkies slightly',
+      'Don\'t go above shoulder height',
+      'Control the negative'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Swinging the weights',
+      'Going too high'
+    ],
+    variations: ['Cable Lateral Raises', 'Single-Arm Lateral Raises', 'Leaning Lateral Raises']
+  },
+  {
+    id: 'shoulders_4',
+    name: 'Front Raises',
+    category: 'shoulders',
+    primaryMuscles: ['Anterior Deltoids'],
+    secondaryMuscles: [],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Stand with dumbbells in front of thighs',
+      'Raise one arm forward to shoulder height',
+      'Lower with control',
+      'Alternate arms or do both together',
+      'Keep core engaged'
+    ],
+    tips: [
+      'Don\'t go above shoulder height',
+      'Keep slight bend in elbow',
+      'Control the movement'
+    ],
+    commonMistakes: [
+      'Using momentum',
+      'Going too high',
+      'Using too much weight'
+    ],
+    variations: ['Plate Front Raises', 'Cable Front Raises', 'Barbell Front Raises']
+  },
+  {
+    id: 'shoulders_5',
+    name: 'Rear Delt Flyes',
+    category: 'shoulders',
+    primaryMuscles: ['Rear Deltoids'],
+    secondaryMuscles: ['Rhomboids'],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Bend over with dumbbells hanging down',
+      'Raise arms out to sides',
+      'Squeeze shoulder blades together',
+      'Lower with control',
+      'Keep slight bend in elbows'
+    ],
+    tips: [
+      'Focus on squeezing rear delts',
+      'Don\'t use momentum',
+      'Keep chest up'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Not squeezing shoulder blades',
+      'Swinging the weights'
+    ],
+    variations: ['Cable Rear Delt Flyes', 'Machine Rear Delt Flyes', 'Incline Rear Delt Flyes']
+  },
+  {
+    id: 'shoulders_6',
+    name: 'Arnold Press',
+    category: 'shoulders',
+    primaryMuscles: ['Shoulders'],
+    secondaryMuscles: ['Triceps'],
+    equipment: 'dumbbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Start with dumbbells at shoulder height, palms facing you',
+      'Press up while rotating palms forward',
+      'End with arms overhead, palms forward',
+      'Reverse the motion on the way down',
+      'Keep core engaged throughout'
+    ],
+    tips: [
+      'Smooth rotation throughout',
+      'Don\'t rush the movement',
+      'Keep elbows under wrists'
+    ],
+    commonMistakes: [
+      'Moving too fast',
+      'Using too much weight',
+      'Not rotating properly'
+    ],
+    variations: ['Seated Arnold Press', 'Single-Arm Arnold Press', 'Cable Arnold Press']
+  },
+
+  // ADDITIONAL CALVES EXERCISES (4 more)
+  {
+    id: 'calves_3',
+    name: 'Donkey Calf Raises',
+    category: 'calves',
+    primaryMuscles: ['Calves'],
+    secondaryMuscles: [],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Position yourself bent over on calf raise machine',
+      'Place balls of feet on platform',
+      'Let heels drop below platform level',
+      'Rise up on toes as high as possible',
+      'Lower with control to feel stretch'
+    ],
+    tips: [
+      'Get full range of motion',
+      'Hold peak contraction',
+      'Control the negative'
+    ],
+    commonMistakes: [
+      'Not going through full ROM',
+      'Bouncing at bottom',
+      'Using momentum'
+    ],
+    variations: ['Partner Donkey Calf Raises', 'Machine Donkey Calf Raises', 'Weighted Donkey Raises']
+  },
+  {
+    id: 'calves_4',
+    name: 'Single-Leg Calf Raises',
+    category: 'calves',
+    primaryMuscles: ['Calves'],
+    secondaryMuscles: [],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Stand on one foot on edge of step',
+      'Hold wall or rail for balance',
+      'Let heel drop below step level',
+      'Rise up on toe as high as possible',
+      'Complete reps then switch legs'
+    ],
+    tips: [
+      'Focus on balance and control',
+      'Full range of motion',
+      'Add weight when ready'
+    ],
+    commonMistakes: [
+      'Using too much assistance',
+      'Not going through full ROM',
+      'Rushing the movement'
+    ],
+    variations: ['Dumbbell Single-Leg Raises', 'Machine Single-Leg Raises', 'Jump Single-Leg Raises']
+  },
+  {
+    id: 'calves_5',
+    name: 'Calf Press on Leg Press',
+    category: 'calves',
+    primaryMuscles: ['Calves'],
+    secondaryMuscles: [],
+    equipment: 'machine',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit in leg press machine',
+      'Place balls of feet on bottom of platform',
+      'Release safety and extend legs',
+      'Press with toes extending ankles',
+      'Lower heels for stretch then repeat'
+    ],
+    tips: [
+      'Keep legs straight throughout',
+      'Focus on ankle extension',
+      'Don\'t let knees bend'
+    ],
+    commonMistakes: [
+      'Bending knees during movement',
+      'Not getting full extension',
+      'Going too fast'
+    ],
+    variations: ['Single-Leg Press Calves', 'Toes-Out Calf Press', 'Toes-In Calf Press']
+  },
+  {
+    id: 'calves_6',
+    name: 'Jump Rope (Calf Focus)',
+    category: 'calves',
+    primaryMuscles: ['Calves'],
+    secondaryMuscles: ['Core'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Hold jump rope handles',
+      'Jump on balls of feet',
+      'Keep jumps small and quick',
+      'Land softly on toes',
+      'Maintain steady rhythm'
+    ],
+    tips: [
+      'Stay on balls of feet',
+      'Keep jumps low',
+      'Maintain steady pace'
+    ],
+    commonMistakes: [
+      'Jumping too high',
+      'Landing flat-footed',
+      'Going too fast initially'
+    ],
+    variations: ['Double-Under Jump Rope', 'Single-Leg Jump Rope', 'Cross-Over Jump Rope']
+  },
+
+  // ADDITIONAL BACK EXERCISES (2 more)
+  {
+    id: 'back_5',
+    name: 'Lat Pulldowns',
+    category: 'back',
+    primaryMuscles: ['Latissimus Dorsi'],
+    secondaryMuscles: ['Biceps', 'Rear Deltoids'],
+    equipment: 'cable',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit at lat pulldown machine',
+      'Grab bar with wide overhand grip',
+      'Pull bar down to upper chest',
+      'Squeeze shoulder blades together',
+      'Control the weight back up'
+    ],
+    tips: [
+      'Lead with elbows',
+      'Don\'t lean too far back',
+      'Focus on lat engagement'
+    ],
+    commonMistakes: [
+      'Pulling bar behind head',
+      'Using too much momentum',
+      'Not engaging lats properly'
+    ],
+    variations: ['Close-Grip Pulldowns', 'Wide-Grip Pulldowns', 'Reverse-Grip Pulldowns']
+  },
+  {
+    id: 'back_6',
+    name: 'T-Bar Rows',
+    category: 'back',
+    primaryMuscles: ['Middle Traps', 'Rhomboids'],
+    secondaryMuscles: ['Rear Deltoids', 'Biceps'],
+    equipment: 'barbell',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Straddle T-bar with bent-over position',
+      'Grab handles with neutral grip',
+      'Pull weight to lower chest',
+      'Squeeze shoulder blades together',
+      'Lower with control'
+    ],
+    tips: [
+      'Keep chest up and back straight',
+      'Pull elbows back and up',
+      'Focus on squeezing at top'
+    ],
+    commonMistakes: [
+      'Rounding the back',
+      'Using too much leg drive',
+      'Not getting full range of motion'
+    ],
+    variations: ['Single-Arm T-Bar Rows', 'Wide-Grip T-Bar Rows', 'Chest-Supported T-Bar Rows']
+  },
+
+  // ADDITIONAL CORE EXERCISES (2 more)
+  {
+    id: 'core_5',
+    name: 'Russian Twists',
+    category: 'core',
+    primaryMuscles: ['Obliques'],
+    secondaryMuscles: ['Rectus Abdominis'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit with knees bent and feet off ground',
+      'Lean back slightly',
+      'Rotate torso from side to side',
+      'Keep core engaged throughout',
+      'Touch ground on each side'
+    ],
+    tips: [
+      'Keep feet off ground',
+      'Rotate from core, not arms',
+      'Maintain steady breathing'
+    ],
+    commonMistakes: [
+      'Moving too fast',
+      'Not rotating from core',
+      'Letting feet touch ground'
+    ],
+    variations: ['Weighted Russian Twists', 'Medicine Ball Russian Twists', 'Feet-Elevated Russian Twists']
+  },
+  {
+    id: 'core_6',
+    name: 'Dead Bug',
+    category: 'core',
+    primaryMuscles: ['Deep Core'],
+    secondaryMuscles: ['Hip Flexors'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Lie on back with arms up and knees at 90 degrees',
+      'Lower opposite arm and leg slowly',
+      'Return to starting position',
+      'Alternate sides',
+      'Keep core engaged throughout'
+    ],
+    tips: [
+      'Move slowly and controlled',
+      'Don\'t let back arch',
+      'Focus on stability'
+    ],
+    commonMistakes: [
+      'Moving too fast',
+      'Letting back arch',
+      'Not coordinating arm and leg'
+    ],
+    variations: ['Dead Bug with Band', 'Dead Bug Hold', 'Single-Limb Dead Bug']
+  },
+
+  // ADDITIONAL FOREARM EXERCISES (3 more)
+  {
+    id: 'forearms_4',
+    name: 'Wrist Curls',
+    category: 'forearms',
+    primaryMuscles: ['Forearm Flexors'],
+    secondaryMuscles: [],
+    equipment: 'dumbbell',
+    difficulty: 'Beginner',
+    instructions: [
+      'Sit with forearms resting on thighs',
+      'Hold dumbbells with underhand grip',
+      'Let wrists extend down',
+      'Curl wrists up squeezing forearms',
+      'Lower with control'
+    ],
+    tips: [
+      'Keep forearms stationary',
+      'Full range of motion',
+      'Use light weight initially'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Moving forearms',
+      'Not getting full ROM'
+    ],
+    variations: ['Reverse Wrist Curls', 'Behind-Back Wrist Curls', 'Cable Wrist Curls']
+  },
+  {
+    id: 'forearms_5',
+    name: 'Plate Pinch',
+    category: 'forearms',
+    primaryMuscles: ['Grip Strength'],
+    secondaryMuscles: ['Forearms'],
+    equipment: 'plate',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold two plates together smooth sides out',
+      'Pinch plates between thumb and fingers',
+      'Hold for specified time',
+      'Focus on grip strength',
+      'Don\'t let plates slip'
+    ],
+    tips: [
+      'Start with lighter plates',
+      'Focus on thumb strength',
+      'Build up holding time gradually'
+    ],
+    commonMistakes: [
+      'Using too heavy plates initially',
+      'Not engaging thumb properly',
+      'Letting plates touch body'
+    ],
+    variations: ['Single Plate Pinch', 'Multiple Plate Pinch', 'Timed Plate Pinch']
+  },
+  {
+    id: 'forearms_6',
+    name: 'Grip Crushers',
+    category: 'forearms',
+    primaryMuscles: ['Grip Strength'],
+    secondaryMuscles: ['Forearms'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Hold grip crusher or tennis ball',
+      'Squeeze as hard as possible',
+      'Hold for 3-5 seconds',
+      'Release and repeat',
+      'Work both hands equally'
+    ],
+    tips: [
+      'Squeeze with full force',
+      'Hold at peak contraction',
+      'Don\'t hold breath'
+    ],
+    commonMistakes: [
+      'Not squeezing hard enough',
+      'Not holding contraction',
+      'Favoring one hand'
+    ],
+    variations: ['Hand Grippers', 'Tennis Ball Squeezes', 'Stress Ball Squeezes']
+  },
+
+  // ADDITIONAL CARDIO EXERCISES (3 more)
+  {
+    id: 'cardio_4',
+    name: 'Mountain Climbers',
+    category: 'cardio',
+    primaryMuscles: ['Core'],
+    secondaryMuscles: ['Shoulders', 'Legs'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Start in plank position',
+      'Alternate bringing knees to chest',
+      'Keep hips level',
+      'Maintain steady rhythm',
+      'Keep core engaged'
+    ],
+    tips: [
+      'Don\'t let hips pike up',
+      'Keep shoulders over wrists',
+      'Breathe steadily'
+    ],
+    commonMistakes: [
+      'Letting hips rise',
+      'Going too fast',
+      'Poor plank position'
+    ],
+    variations: ['Cross-Body Mountain Climbers', 'Slow Mountain Climbers', 'Elevated Mountain Climbers']
+  },
+  {
+    id: 'cardio_5',
+    name: 'High Knees',
+    category: 'cardio',
+    primaryMuscles: ['Hip Flexors'],
+    secondaryMuscles: ['Core', 'Calves'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Stand in place',
+      'Lift knees up to waist level',
+      'Alternate legs quickly',
+      'Stay on balls of feet',
+      'Keep core engaged'
+    ],
+    tips: [
+      'Drive knees up high',
+      'Stay light on feet',
+      'Pump arms naturally'
+    ],
+    commonMistakes: [
+      'Not lifting knees high enough',
+      'Landing flat-footed',
+      'Leaning too far forward'
+    ],
+    variations: ['High Knees in Place', 'Traveling High Knees', 'High Knees with Arms']
+  },
+  {
+    id: 'cardio_6',
+    name: 'Box Steps',
+    category: 'cardio',
+    primaryMuscles: ['Legs'],
+    secondaryMuscles: ['Glutes', 'Core'],
+    equipment: 'bodyweight',
+    difficulty: 'Beginner',
+    instructions: [
+      'Step up onto box with one foot',
+      'Bring other foot up',
+      'Step down with same foot that went up first',
+      'Alternate leading foot',
+      'Maintain steady rhythm'
+    ],
+    tips: [
+      'Step fully onto box',
+      'Control the descent',
+      'Keep chest up'
+    ],
+    commonMistakes: [
+      'Not stepping fully onto box',
+      'Using momentum',
+      'Favoring one leg'
+    ],
+    variations: ['Weighted Box Steps', 'Lateral Box Steps', 'Single-Leg Box Steps']
+  },
+
+  // ADDITIONAL FULL-BODY EXERCISES (4 more)
+  {
+    id: 'fullbody_3',
+    name: 'Turkish Get-ups',
+    category: 'full-body',
+    primaryMuscles: ['Full Body'],
+    secondaryMuscles: ['Core', 'Shoulders', 'Legs'],
+    equipment: 'kettlebell',
+    difficulty: 'Advanced',
+    instructions: [
+      'Lie on back holding kettlebell overhead',
+      'Roll to side then up to sitting',
+      'Come to kneeling position',
+      'Stand up while keeping bell overhead',
+      'Reverse the movement to return'
+    ],
+    tips: [
+      'Keep eyes on kettlebell',
+      'Move slowly and controlled',
+      'Practice without weight first'
+    ],
+    commonMistakes: [
+      'Moving too fast',
+      'Not keeping bell overhead',
+      'Poor transitional form'
+    ],
+    variations: ['Half Turkish Get-ups', 'Bodyweight Get-ups', 'Dumbbell Get-ups']
+  },
+  {
+    id: 'fullbody_4',
+    name: 'Bear Crawl',
+    category: 'full-body',
+    primaryMuscles: ['Core'],
+    secondaryMuscles: ['Shoulders', 'Legs'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Start on hands and knees',
+      'Lift knees 1-2 inches off ground',
+      'Crawl forward moving opposite hand and foot',
+      'Keep hips level',
+      'Maintain steady pace'
+    ],
+    tips: [
+      'Keep knees low but off ground',
+      'Don\'t let hips sway',
+      'Engage core throughout'
+    ],
+    commonMistakes: [
+      'Lifting hips too high',
+      'Moving too fast',
+      'Not engaging core'
+    ],
+    variations: ['Backwards Bear Crawl', 'Lateral Bear Crawl', 'Bear Crawl Hold']
+  },
+  {
+    id: 'fullbody_5',
+    name: 'Man Makers',
+    category: 'full-body',
+    primaryMuscles: ['Full Body'],
+    secondaryMuscles: ['Arms', 'Legs', 'Core'],
+    equipment: 'dumbbell',
+    difficulty: 'Advanced',
+    instructions: [
+      'Hold dumbbells in push-up position',
+      'Do push-up then row each arm',
+      'Jump feet to squat position',
+      'Clean dumbbells to shoulders',
+      'Press overhead then return to start'
+    ],
+    tips: [
+      'Maintain good form throughout',
+      'Use lighter weights initially',
+      'Focus on smooth transitions'
+    ],
+    commonMistakes: [
+      'Using too much weight',
+      'Rushing through movements',
+      'Poor form on individual components'
+    ],
+    variations: ['Bodyweight Man Makers', 'Single Dumbbell Man Makers', 'Burpee Man Makers']
+  },
+  {
+    id: 'fullbody_6',
+    name: 'Wall Balls',
+    category: 'full-body',
+    primaryMuscles: ['Legs'],
+    secondaryMuscles: ['Shoulders', 'Core'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Hold medicine ball at chest level',
+      'Squat down keeping chest up',
+      'Explosively stand and throw ball to wall target',
+      'Catch ball and immediately go into next squat',
+      'Maintain steady rhythm'
+    ],
+    tips: [
+      'Use legs to power the throw',
+      'Catch ball with soft hands',
+      'Keep core engaged'
+    ],
+    commonMistakes: [
+      'Using all arms to throw',
+      'Not squatting deep enough',
+      'Poor catching technique'
+    ],
+    variations: ['Lighter Wall Balls', 'Higher Target Wall Balls', 'Single-Arm Wall Balls']
+  },
+
+  // ADDITIONAL GLUTE EXERCISE (1 more)
+  {
+    id: 'glutes_6',
+    name: 'Bulgarian Split Squats',
+    category: 'glutes',
+    primaryMuscles: ['Glutes'],
+    secondaryMuscles: ['Quadriceps', 'Hamstrings'],
+    equipment: 'bodyweight',
+    difficulty: 'Intermediate',
+    instructions: [
+      'Stand 2-3 feet in front of bench',
+      'Place back foot on bench behind you',
+      'Lower into lunge position',
+      'Push through front heel to return',
+      'Complete reps then switch legs'
+    ],
+    tips: [
+      'Keep most weight on front leg',
+      'Don\'t lean too far forward',
+      'Focus on glute activation'
+    ],
+    commonMistakes: [
+      'Putting too much weight on back foot',
+      'Leaning forward excessively',
+      'Not going deep enough'
+    ],
+    variations: ['Weighted Bulgarian Split Squats', 'Deficit Bulgarian Split Squats', 'Jump Bulgarian Split Squats']
   }
 ];
 
