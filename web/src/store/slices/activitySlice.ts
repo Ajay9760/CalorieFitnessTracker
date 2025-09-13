@@ -8,32 +8,9 @@ interface ActivityState {
   error: string | null;
 }
 
-// Sample data for demonstration
-const sampleTodaysActivity: ActivityEntry = {
-  id: '1',
-  date: new Date(),
-  steps: 8547,
-  caloriesBurned: 342,
-  distance: 6.2,
-  activeMinutes: 45,
-  source: 'manual',
-  exercises: [
-    {
-      name: 'Morning Walk',
-      duration: 30,
-      caloriesBurned: 150
-    },
-    {
-      name: 'Yoga',
-      duration: 15,
-      caloriesBurned: 45
-    }
-  ]
-};
-
 const initialState: ActivityState = {
-  activities: [sampleTodaysActivity],
-  todaysActivity: sampleTodaysActivity,
+  activities: [],
+  todaysActivity: null,
   loading: false,
   error: null,
 };

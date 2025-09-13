@@ -82,16 +82,19 @@ const StatLabel = styled.div`
 `;
 
 const WelcomeMessage = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 200%);
+  background: 
+    linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 50%, rgba(240, 147, 251, 0.9) 100%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="healthy-pattern" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="20" r="2" fill="%23ffffff" opacity="0.1"/><circle cx="20" cy="50" r="1.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.1"/><path d="M10,10 Q30,5 50,10 T90,10" stroke="%23ffffff" stroke-width="0.5" fill="none" opacity="0.05"/></pattern></defs><rect width="100%" height="100%" fill="url(%23healthy-pattern)"/></svg>');
+  background-size: cover, 100px 100px;
   color: white;
-  padding: 4rem;
-  border-radius: 20px;
+  padding: 5rem 3rem;
+  border-radius: 25px;
   text-align: center;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
   position: relative;
   overflow: hidden;
-  min-height: 300px;
+  min-height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -100,12 +103,21 @@ const WelcomeMessage = styled.div`
   &::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: rotate 10s linear infinite;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+  }
+
+  &::after {
+    content: '🌟';
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 3rem;
+    animation: twinkle 2s ease-in-out infinite alternate;
   }
 
   @keyframes rotate {
@@ -113,21 +125,37 @@ const WelcomeMessage = styled.div`
     to { transform: rotate(360deg); }
   }
 
+  @keyframes twinkle {
+    from { opacity: 0.5; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.1); }
+  }
+
   h1 {
     position: relative;
     z-index: 1;
-    font-size: 2.8rem;
-    margin-bottom: 1.5rem;
-    font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    font-weight: 900;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    line-height: 1.2;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
   }
 
   p {
     position: relative;
     z-index: 1;
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
     opacity: 0.95;
+    line-height: 1.6;
+    max-width: 600px;
+    
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 `;
 
@@ -239,42 +267,59 @@ const MotivationalSection = styled.div`
 `;
 
 const MotivationalCard = styled.div`
-  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 50%, #e17055 100%);
+  background: 
+    linear-gradient(135deg, rgba(255, 234, 167, 0.95) 0%, rgba(253, 203, 110, 0.95) 50%, rgba(225, 112, 85, 0.95) 100%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><pattern id="food-pattern" patternUnits="userSpaceOnUse" width="40" height="40"><text x="5" y="15" font-size="12" fill="%23ffffff" opacity="0.1">🍛</text><text x="25" y="35" font-size="10" fill="%23ffffff" opacity="0.1">🥗</text></pattern></defs><rect width="100%" height="100%" fill="url(%23food-pattern)"/></svg>');
+  background-size: cover, 40px 40px;
   color: #2d3436;
-  padding: 3rem;
-  border-radius: 20px;
+  padding: 4rem 3rem;
+  border-radius: 25px;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(253, 203, 110, 0.3);
+  box-shadow: 0 20px 40px rgba(253, 203, 110, 0.4);
   position: relative;
   overflow: hidden;
   
   &::before {
-    content: '';
+    content: '🥘';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shine 3s infinite;
+    top: 20px;
+    left: 20px;
+    font-size: 2.5rem;
+    animation: float 3s ease-in-out infinite;
   }
   
-  @keyframes shine {
-    0% { left: -100%; }
-    100% { left: 100%; }
+  &::after {
+    content: '🏃‍♂️';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 2.5rem;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateX(0px); }
+    50% { transform: translateX(10px); }
   }
   
   h3 {
-    font-size: 2.2rem;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
   }
   
   p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    line-height: 1.6;
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
     opacity: 0.9;
+    font-weight: 500;
   }
 `;
 
@@ -311,12 +356,56 @@ const MotivationalStats = styled.div`
 
 const CallToAction = styled.div`
   background: rgba(45, 52, 54, 0.1);
-  padding: 1.5rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
+  padding: 2rem;
+  border-radius: 15px;
+  font-size: 1.2rem;
   font-weight: 500;
-  margin-top: 1.5rem;
+  margin: 2rem 0 1.5rem 0;
   border: 2px dashed rgba(45, 52, 54, 0.3);
+  backdrop-filter: blur(5px);
+`;
+
+const FoodShowcase = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+`;
+
+const FoodIcon = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2.5rem;
+  animation: wiggle 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
+  
+  span {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #2d3436;
+  }
+  
+  &:nth-child(1) { animation-delay: 0s; }
+  &:nth-child(2) { animation-delay: 0.3s; }
+  &:nth-child(3) { animation-delay: 0.6s; }
+  &:nth-child(4) { animation-delay: 0.9s; }
+  &:nth-child(5) { animation-delay: 1.2s; }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+  }
 `;
 
 const MealSummaryCard = styled.div`
@@ -420,8 +509,8 @@ const Dashboard: React.FC = () => {
     <Container>
       <WelcomeMessage>
         <FitnessEmojis>💪🏃‍♂️🥗</FitnessEmojis>
-        <h1>नमस्ते! Welcome to Your Wellness Journey</h1>
-        <p>Transform your health with India's most comprehensive nutrition tracker</p>
+        <h1>🙏 नमस्ते! Start Your Wellness Journey</h1>
+        <p>🇮🇳 India's most comprehensive nutrition and fitness tracker with 1000+ Indian foods</p>
         
         <FitnessQuote>
           <QuoteText>{todaysQuote.text}</QuoteText>
@@ -430,15 +519,15 @@ const Dashboard: React.FC = () => {
 
         <HeroStats>
           <HeroStatCard>
-            <HeroStatValue>{todaysCalories}</HeroStatValue>
-            <HeroStatLabel>Calories Today</HeroStatLabel>
+            <HeroStatValue>{todaysCalories || '--'}</HeroStatValue>
+            <HeroStatLabel>Calories Logged</HeroStatLabel>
           </HeroStatCard>
           <HeroStatCard>
-            <HeroStatValue>{todaysSteps.toLocaleString()}</HeroStatValue>
+            <HeroStatValue>{todaysSteps > 0 ? todaysSteps.toLocaleString() : '--'}</HeroStatValue>
             <HeroStatLabel>Steps Taken</HeroStatLabel>
           </HeroStatCard>
           <HeroStatCard>
-            <HeroStatValue>{todaysProtein.toFixed(0)}g</HeroStatValue>
+            <HeroStatValue>{todaysProtein > 0 ? todaysProtein.toFixed(0) + 'g' : '--'}</HeroStatValue>
             <HeroStatLabel>Protein Intake</HeroStatLabel>
           </HeroStatCard>
         </HeroStats>
@@ -471,27 +560,35 @@ const Dashboard: React.FC = () => {
       {todaysMeals.length === 0 ? (
         <MotivationalSection>
           <MotivationalCard>
-            <h3>🎆 Start Your Wellness Journey Today!</h3>
-            <p>"Every journey of a thousand miles begins with a single step" - and your healthy journey starts with logging your first meal!</p>
+            <h3>🎆 Your Wellness Journey Starts Here!</h3>
+            <p>🌱 "A healthy outside starts from the inside" - Begin tracking your nutrition today and transform your life, one meal at a time!</p>
             
             <MotivationalStats>
               <div>
-                <strong>1000+</strong>
+                <strong>🍛 1000+</strong>
                 <span>Indian Foods</span>
               </div>
               <div>
-                <strong>Complete</strong>
-                <span>Nutrition Info</span>
+                <strong>📊 Complete</strong>
+                <span>Nutrition Data</span>
               </div>
               <div>
-                <strong>Regional</strong>
+                <strong>🇮🇳 4 Regional</strong>
                 <span>Cuisines</span>
               </div>
             </MotivationalStats>
             
             <CallToAction>
-              🍛 <strong>Ready to begin?</strong> Click "Food Log" to discover dal, roti, rice, sabzi and thousands of Indian foods with complete nutrition information!
+              🌟 <strong>Take the first step!</strong> 🍛 Log your breakfast, lunch, or dinner to discover detailed nutrition for Dal, Roti, Rice, Sabzi, and thousands more authentic Indian dishes!
             </CallToAction>
+            
+            <FoodShowcase>
+              <FoodIcon>🍛<span>Dal</span></FoodIcon>
+              <FoodIcon>🥘<span>Roti</span></FoodIcon>
+              <FoodIcon>🍚<span>Rice</span></FoodIcon>
+              <FoodIcon>🥗<span>Sabzi</span></FoodIcon>
+              <FoodIcon>🥙<span>Paneer</span></FoodIcon>
+            </FoodShowcase>
           </MotivationalCard>
         </MotivationalSection>
       ) : (
