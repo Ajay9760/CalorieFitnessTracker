@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { logoutUser, selectCurrentUser } from '../store/slices/userSlice';
 
 const NavContainer = styled.nav`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 200%);
@@ -82,10 +84,63 @@ const NavLink = styled(Link)<{ $isActive: boolean }>`
   }
 `;
 
+const UserSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const UserName = styled.span`
+  font-weight: 600;
+  font-size: 0.9rem;
+`;
+
+const UserEmail = styled.span`
+  font-size: 0.75rem;
+  opacity: 0.8;
+`;
+
+const LogoutButton = styled.button`
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+  }
+`;
+
 const Navbar: React.FC = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
 
   const isActive = (path: string) => location.pathname === path;
+  
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
 
   return (
     <NavContainer>
@@ -107,6 +162,18 @@ const Navbar: React.FC = () => {
           <NavLink to="/profile" $isActive={isActive('/profile')}>
             👤 Profile
           </NavLink>
+          
+          <UserSection>
+            {currentUser && (
+              <UserInfo>
+                <UserName>👋 {currentUser.name}</UserName>
+                <UserEmail>{currentUser.email}</UserEmail>
+              </UserInfo>
+            )}
+            <LogoutButton onClick={handleLogout}>
+              🚪 Logout
+            </LogoutButton>
+          </UserSection>
         </NavLinks>
       </NavContent>
     </NavContainer>
