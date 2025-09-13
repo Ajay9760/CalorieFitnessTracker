@@ -27,7 +27,7 @@ export interface FoodItem {
   calories: number; // per 100g
   macros: Macronutrients;
   servingSizes: ServingSize[];
-  isCommonDish: boolean;
+  isCommonDish?: boolean;
   tags: string[];
   imageUrl?: string;
   barcode?: string;
@@ -50,10 +50,10 @@ export interface ServingSize {
 
 export type FoodCategory = 
   | 'grains' | 'vegetables' | 'fruits' | 'dairy' | 'meat_fish' 
-  | 'legumes' | 'nuts_seeds' | 'beverages' | 'sweets' | 'snacks' 
-  | 'spices' | 'oils_fats';
+  | 'legumes' | 'pulses' | 'nuts_seeds' | 'beverages' | 'sweets' | 'snacks' 
+  | 'spices' | 'oils_fats' | 'prepared_dishes' | 'herbs';
 
-export type Region = 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian';
+export type Region = 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all_india' | 'international';
 
 // Meal Types
 export interface MealEntry {

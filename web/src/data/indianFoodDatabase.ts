@@ -1,6 +1,82 @@
-import { FoodItem } from '../types';
+export interface IndianFood {
+  id: string;
+  name: string;
+  nameHindi?: string;
+  nameRegional?: string;
+  category: FoodCategory;
+  subCategory?: string;
+  region: Region[];
+  calories: number; // per 100g
+  macros: Macronutrients;
+  vitamins?: Vitamins;
+  minerals?: Minerals;
+  servingSizes: ServingSize[];
+  glycemicIndex?: number;
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  isGlutenFree?: boolean;
+  isCommonDish?: boolean; // for compatibility
+  commonPreparations?: string[];
+  seasonality?: string[];
+  shelfLife?: string;
+  storageInstructions?: string;
+  healthBenefits?: string[];
+  tags: string[];
+  imageUrl?: string;
+}
 
-export const INDIAN_FOOD_DATABASE: FoodItem[] = [
+export interface Macronutrients {
+  protein: number; // in grams per 100g
+  carbs: number;
+  fats: number;
+  fiber: number;
+  sugar: number;
+  sodium: number; // in mg
+}
+
+export interface Vitamins {
+  vitaminA?: number; // in IU
+  vitaminC?: number; // in mg
+  vitaminD?: number; // in IU
+  vitaminE?: number; // in mg
+  vitaminK?: number; // in mcg
+  thiamine?: number; // B1 in mg
+  riboflavin?: number; // B2 in mg
+  niacin?: number; // B3 in mg
+  vitaminB6?: number; // in mg
+  folate?: number; // in mcg
+  vitaminB12?: number; // in mcg
+}
+
+export interface Minerals {
+  calcium?: number; // in mg
+  iron?: number; // in mg
+  magnesium?: number; // in mg
+  phosphorus?: number; // in mg
+  potassium?: number; // in mg
+  sodium?: number; // in mg
+  zinc?: number; // in mg
+  copper?: number; // in mg
+  manganese?: number; // in mg
+  selenium?: number; // in mcg
+}
+
+export interface ServingSize {
+  unit: string;
+  grams: number;
+  description?: string;
+  commonName?: string;
+}
+
+export type FoodCategory = 
+  | 'fruits' | 'vegetables' | 'pulses' | 'legumes' | 'grains' | 'dairy' 
+  | 'nuts_seeds' | 'spices' | 'beverages' | 'sweets' | 'prepared_dishes'
+  | 'snacks' | 'oils_fats' | 'meat_fish' | 'herbs';
+
+export type Region = 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all_india' | 'international';
+
+// Comprehensive Indian Food Database
+export const INDIAN_FOOD_DATABASE: IndianFood[] = [
   // GRAINS & CEREALS
   {
     id: 'rice_basmati',
@@ -1707,11 +1783,11 @@ export const INDIAN_FOOD_DATABASE: FoodItem[] = [
   },
 ];
 
-export const getFoodById = (id: string): FoodItem | undefined => {
+export const getFoodById = (id: string): IndianFood | undefined => {
   return INDIAN_FOOD_DATABASE.find(food => food.id === id);
 };
 
-export const searchFoodByName = (query: string): FoodItem[] => {
+export const searchFoodByName = (query: string): IndianFood[] => {
   const lowerQuery = query.toLowerCase();
   return INDIAN_FOOD_DATABASE.filter(food => 
     food.name.toLowerCase().includes(lowerQuery) ||
@@ -1720,10 +1796,10 @@ export const searchFoodByName = (query: string): FoodItem[] => {
   );
 };
 
-export const getFoodsByCategory = (category: string): FoodItem[] => {
+export const getFoodsByCategory = (category: FoodCategory): IndianFood[] => {
   return INDIAN_FOOD_DATABASE.filter(food => food.category === category);
 };
 
-export const getFoodsByRegion = (region: string): FoodItem[] => {
-  return INDIAN_FOOD_DATABASE.filter(food => food.region.includes(region as any));
+export const getFoodsByRegion = (region: Region): IndianFood[] => {
+  return INDIAN_FOOD_DATABASE.filter(food => food.region.includes(region));
 };
