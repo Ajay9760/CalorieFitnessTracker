@@ -58,7 +58,7 @@ export type Region = 'north_indian' | 'south_indian' | 'east_indian' | 'west_ind
 // Meal Types
 export interface MealEntry {
   id: string;
-  userId: string;
+  userId?: string;
   foodId: string;
   foodName: string;
   quantity: number; // in grams
@@ -75,13 +75,20 @@ export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 // Activity Types
 export interface ActivityEntry {
   id: string;
-  userId: string;
+  userId?: string;
   date: Date;
   steps: number;
   distance: number; // in km
   caloriesBurned: number;
   activeMinutes: number;
-  source: 'manual' | 'google_fit' | 'apple_health' | 'device_sensor';
+  source?: 'manual' | 'google_fit' | 'apple_health' | 'device_sensor';
+  exercises?: Exercise[];
+}
+
+export interface Exercise {
+  name: string;
+  duration: number; // in minutes
+  caloriesBurned: number;
 }
 
 // Goal Types
