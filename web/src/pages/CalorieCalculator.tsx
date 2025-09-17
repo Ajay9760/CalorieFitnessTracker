@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { selectCurrentUser, updateUser } from '../store/slices/userSlice';
@@ -48,6 +48,11 @@ const ContentGrid = styled.div`
   
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    gap: 1.5rem;
   }
 `;
 
@@ -74,6 +79,16 @@ const GoalsGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
 `;
 
 const GoalCard = styled.div<{ $active: boolean }>`
@@ -84,11 +99,30 @@ const GoalCard = styled.div<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   
-  &:hover {
+  &:hover, &:focus {
     border-color: #667eea;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    outline: none;
+  }
+  
+  &:active {
+    transform: translateY(0px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    min-height: 100px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    min-height: 90px;
   }
 `;
 
@@ -181,17 +215,23 @@ const Label = styled.label`
   color: #333;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ $error?: boolean }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => props.$error ? '#e74c3c' : '#e0e0e0'};
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: ${props => props.$error ? '#e74c3c' : '#667eea'};
+    box-shadow: 0 0 0 3px ${props => props.$error ? 'rgba(231, 76, 60, 0.1)' : 'rgba(102, 126, 234, 0.1)'};
+  }
+  
+  &:invalid {
+    border-color: #e74c3c;
   }
 `;
 
@@ -275,73 +315,254 @@ const DisclaimerText = styled.p`
   margin: 0 auto;
 `;
 
+const Select = styled.select<{ $error?: boolean }>`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid ${props => props.$error ? '#e74c3c' : '#e0e0e0'};
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    border-color: ${props => props.$error ? '#e74c3c' : '#667eea'};
+    box-shadow: 0 0 0 3px ${props => props.$error ? 'rgba(231, 76, 60, 0.1)' : 'rgba(102, 126, 234, 0.1)'};
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  
+  &:before {
+    content: "⚠️";
+    font-size: 0.75rem;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  color: #27ae60;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  
+  &:before {
+    content: "✅";
+    font-size: 0.75rem;
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+// localStorage utilities
+const STORAGE_KEY = 'calorieCalculatorState';
+
+const saveToStorage = (data: any) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.warn('Failed to save to localStorage:', error);
+  }
+};
+
+const loadFromStorage = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch (error) {
+    console.warn('Failed to load from localStorage:', error);
+    return null;
+  }
+};
+
 const CalorieCalculator: React.FC = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
   
-  // Form state
-  const [weight, setWeight] = useState(currentUser?.weight || 70);
-  const [height, setHeight] = useState(currentUser?.height || 170);
-  const [age, setAge] = useState(currentUser?.age || 25);
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>(currentUser?.gender || 'male');
-  const [activityLevel, setActivityLevel] = useState(currentUser?.activityLevel || 'moderately_active');
-  const [selectedGoal, setSelectedGoal] = useState<FitnessGoal>(currentUser?.fitnessGoal || 'maintain_weight');
-  const [targetWeight, setTargetWeight] = useState(currentUser?.targetWeight || weight);
+  // Initialize state with localStorage data or user data
+  const savedData = loadFromStorage();
   
+  // Form state
+  const [weight, setWeight] = useState(savedData?.weight || currentUser?.weight || 70);
+  const [height, setHeight] = useState(savedData?.height || currentUser?.height || 170);
+  const [age, setAge] = useState(savedData?.age || currentUser?.age || 25);
+  const [gender, setGender] = useState<'male' | 'female' | 'other'>(savedData?.gender || currentUser?.gender || 'male');
+  const [activityLevel, setActivityLevel] = useState(savedData?.activityLevel || currentUser?.activityLevel || 'moderately_active');
+  const [selectedGoal, setSelectedGoal] = useState<FitnessGoal>(savedData?.selectedGoal || currentUser?.fitnessGoal || 'maintain_weight');
+  const [targetWeight, setTargetWeight] = useState(savedData?.targetWeight || currentUser?.targetWeight || weight);
+  
+  // UI state
   const [calculation, setCalculation] = useState<CalorieCalculation | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  
+  // Form validation state
+  const [errors, setErrors] = useState<{
+    weight?: string;
+    height?: string;
+    age?: string;
+    targetWeight?: string;
+  }>({});
 
-  // Calculate results whenever inputs change
+  // Validation functions
+  const validateWeight = useCallback((value: number) => {
+    if (!value || value < 30) return 'Weight must be at least 30 kg';
+    if (value > 300) return 'Weight must be less than 300 kg';
+    return '';
+  }, []);
+
+  const validateHeight = useCallback((value: number) => {
+    if (!value || value < 100) return 'Height must be at least 100 cm';
+    if (value > 250) return 'Height must be less than 250 cm';
+    return '';
+  }, []);
+
+  const validateAge = useCallback((value: number) => {
+    if (!value || value < 13) return 'Age must be at least 13 years';
+    if (value > 100) return 'Age must be less than 100 years';
+    return '';
+  }, []);
+
+  const validateTargetWeight = useCallback((value: number, currentWeight: number) => {
+    if (!value || value < 30) return 'Target weight must be at least 30 kg';
+    if (value > 300) return 'Target weight must be less than 300 kg';
+    const difference = Math.abs(value - currentWeight);
+    if (difference > 50) return 'Target weight should be within 50 kg of current weight';
+    return '';
+  }, []);
+
+  // Validate form, calculate results, and persist state
   useEffect(() => {
-    const mockUser: User = {
-      id: currentUser?.id || 'temp',
-      email: currentUser?.email || 'temp@example.com',
-      name: currentUser?.name || 'User',
-      age,
-      gender,
-      height,
-      weight,
-      activityLevel,
-      dietType: currentUser?.dietType || 'vegetarian',
-      region: currentUser?.region || 'north_indian',
-      fitnessGoal: selectedGoal,
-      targetWeight,
-      weeklyWeightChangeGoal: GOAL_PRESETS.find(p => p.goal === selectedGoal)?.recommendedWeightChange || 0,
-      dailyCalorieGoal: 2000,
-      dailyStepGoal: 10000,
-      dailyWaterGoal: 2000,
-      dailyProteinGoal: 120,
-      dailyCarbsGoal: 200,
-      dailyFatsGoal: 80,
-      createdAt: new Date(),
-      updatedAt: new Date()
+    const newErrors = {
+      weight: validateWeight(weight),
+      height: validateHeight(height),
+      age: validateAge(age),
+      targetWeight: validateTargetWeight(targetWeight, weight)
     };
+    
+    setErrors(newErrors);
 
-    const result = calculateUserCaloriesAndMacros(mockUser);
-    setCalculation(result);
-  }, [weight, height, age, gender, activityLevel, selectedGoal, targetWeight, currentUser]);
+    // Persist current form state
+    saveToStorage({ weight, height, age, gender, activityLevel, selectedGoal, targetWeight });
+    
+    // Only calculate if no validation errors
+    const hasErrors = Object.values(newErrors).some(error => error !== '');
+    if (hasErrors) {
+      setCalculation(null);
+      return;
+    }
+    
+    setIsCalculating(true);
+    
+    // Add a small delay for better UX
+    const timer = setTimeout(() => {
+      try {
+        const mockUser: User = {
+          id: currentUser?.id || 'temp',
+          email: currentUser?.email || 'temp@example.com',
+          name: currentUser?.name || 'User',
+          age,
+          gender,
+          height,
+          weight,
+          activityLevel,
+          dietType: currentUser?.dietType || 'vegetarian',
+          region: currentUser?.region || 'north_indian',
+          fitnessGoal: selectedGoal,
+          targetWeight,
+          weeklyWeightChangeGoal: GOAL_PRESETS.find(p => p.goal === selectedGoal)?.recommendedWeightChange || 0,
+          dailyCalorieGoal: 2000,
+          dailyStepGoal: 10000,
+          dailyWaterGoal: 2000,
+          dailyProteinGoal: 120,
+          dailyCarbsGoal: 200,
+          dailyFatsGoal: 80,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
 
-  const handleSaveToProfile = () => {
-    if (!currentUser || !calculation) return;
+        const result = calculateUserCaloriesAndMacros(mockUser);
+        setCalculation(result);
+      } catch (error) {
+        console.error('Calculation error:', error);
+        setCalculation(null);
+      } finally {
+        setIsCalculating(false);
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [weight, height, age, gender, activityLevel, selectedGoal, targetWeight, currentUser, validateWeight, validateHeight, validateAge, validateTargetWeight]);
 
-    const updatedUser: Partial<User> = {
-      age,
-      gender,
-      height,
-      weight,
-      activityLevel,
-      fitnessGoal: selectedGoal,
-      targetWeight,
-      weeklyWeightChangeGoal: GOAL_PRESETS.find(p => p.goal === selectedGoal)?.recommendedWeightChange || 0,
-      dailyCalorieGoal: calculation.targetCalories,
-      dailyProteinGoal: calculation.macros.protein.grams,
-      dailyCarbsGoal: calculation.macros.carbs.grams,
-      dailyFatsGoal: calculation.macros.fats.grams,
-      dailyWaterGoal: calculateWaterIntake(weight, activityLevel),
-      updatedAt: new Date()
-    };
+  const handleSaveToProfile = async () => {
+    if (!currentUser || !calculation || isSaving) return;
 
-    dispatch(updateUser(updatedUser));
-    alert('Goals updated successfully!');
+    // Check for validation errors
+    const hasErrors = Object.values(errors).some(error => error !== '');
+    if (hasErrors) {
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+
+    try {
+      // Simulate async operation
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const updatedUser: Partial<User> = {
+        age,
+        gender,
+        height,
+        weight,
+        activityLevel,
+        fitnessGoal: selectedGoal,
+        targetWeight,
+        weeklyWeightChangeGoal: GOAL_PRESETS.find(p => p.goal === selectedGoal)?.recommendedWeightChange || 0,
+        dailyCalorieGoal: calculation.targetCalories,
+        dailyProteinGoal: calculation.macros.protein.grams,
+        dailyCarbsGoal: calculation.macros.carbs.grams,
+        dailyFatsGoal: calculation.macros.fats.grams,
+        dailyWaterGoal: calculateWaterIntake(weight, activityLevel),
+        updatedAt: new Date()
+      };
+
+      dispatch(updateUser(updatedUser));
+      setSaveSuccess(true);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Save error:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const bmi = calculateBMI(weight, height);
@@ -356,127 +577,171 @@ const CalorieCalculator: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Title>🧮 Calorie & Macro Calculator</Title>
+        <Title role="heading" aria-level={1}>🧮 Calorie & Macro Calculator</Title>
         <Subtitle>
           Get personalized calorie and macro recommendations based on your fitness goals
         </Subtitle>
       </Header>
 
+      <main>
       <ContentGrid>
         {/* Input Section */}
-        <Card>
-          <CardTitle>📊 Your Information</CardTitle>
+        <Card as="section" aria-labelledby="input-section-title">
+          <CardTitle id="input-section-title" as="h2">📋 Your Information</CardTitle>
+          <form onSubmit={(e) => e.preventDefault()}>
           
           <InputGroup>
-            <Label>Age (years)</Label>
+            <Label htmlFor="age">Age (years)</Label>
             <Input
+              id="age"
               type="number"
               value={age}
               onChange={(e) => setAge(Number(e.target.value))}
               min="13"
               max="100"
+              $error={!!errors.age}
+              aria-describedby={errors.age ? "age-error" : undefined}
             />
+            {errors.age && <ErrorMessage id="age-error">{errors.age}</ErrorMessage>}
           </InputGroup>
 
           <InputGroup>
-            <Label>Gender</Label>
-            <select 
+            <Label htmlFor="gender">Gender</Label>
+            <Select 
+              id="gender"
               value={gender} 
               onChange={(e) => setGender(e.target.value as 'male' | 'female' | 'other')}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '2px solid #e0e0e0',
-                borderRadius: '8px',
-                fontSize: '1rem'
-              }}
             >
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
-            </select>
+            </Select>
           </InputGroup>
 
           <InputGroup>
-            <Label>Height (cm)</Label>
+            <Label htmlFor="height">Height (cm)</Label>
             <Input
+              id="height"
               type="number"
               value={height}
               onChange={(e) => setHeight(Number(e.target.value))}
               min="100"
               max="250"
+              $error={!!errors.height}
+              aria-describedby={errors.height ? "height-error" : undefined}
+              placeholder="e.g., 170"
             />
+            {errors.height && <ErrorMessage id="height-error">{errors.height}</ErrorMessage>}
           </InputGroup>
 
           <InputGroup>
-            <Label>Current Weight (kg)</Label>
+            <Label htmlFor="weight">Current Weight (kg)</Label>
             <Input
+              id="weight"
               type="number"
               value={weight}
               onChange={(e) => setWeight(Number(e.target.value))}
               min="30"
               max="300"
+              $error={!!errors.weight}
+              aria-describedby={errors.weight ? "weight-error" : undefined}
+              placeholder="e.g., 70"
             />
+            {errors.weight && <ErrorMessage id="weight-error">{errors.weight}</ErrorMessage>}
           </InputGroup>
 
           <InputGroup>
-            <Label>Target Weight (kg)</Label>
+            <Label htmlFor="targetWeight">Target Weight (kg)</Label>
             <Input
+              id="targetWeight"
               type="number"
               value={targetWeight}
               onChange={(e) => setTargetWeight(Number(e.target.value))}
               min="30"
               max="300"
+              $error={!!errors.targetWeight}
+              aria-describedby={errors.targetWeight ? "target-weight-error" : undefined}
+              placeholder="e.g., 65"
             />
+            {errors.targetWeight && <ErrorMessage id="target-weight-error">{errors.targetWeight}</ErrorMessage>}
           </InputGroup>
 
           <InputGroup>
-            <Label>Activity Level</Label>
-            <select 
+            <Label htmlFor="activityLevel">Activity Level</Label>
+            <Select 
+              id="activityLevel"
               value={activityLevel} 
               onChange={(e) => setActivityLevel(e.target.value as any)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '2px solid #e0e0e0',
-                borderRadius: '8px',
-                fontSize: '1rem'
-              }}
             >
               <option value="sedentary">Sedentary (Little/no exercise)</option>
               <option value="lightly_active">Lightly Active (1-3 days/week)</option>
               <option value="moderately_active">Moderately Active (3-5 days/week)</option>
               <option value="very_active">Very Active (6-7 days/week)</option>
               <option value="extra_active">Extra Active (2x/day, intense)</option>
-            </select>
+            </Select>
           </InputGroup>
 
           {currentUser && (
-            <Button onClick={handleSaveToProfile}>
-              💾 Save to Profile
-            </Button>
+            <div>
+              <Button 
+                onClick={handleSaveToProfile}
+                disabled={isSaving || Object.values(errors).some(error => error !== '')}
+                aria-label="Save goals to profile"
+              >
+                {isSaving ? (
+                  <>
+                    <LoadingSpinner />
+                    Saving...
+                  </>
+                ) : (
+                  '💾 Save to Profile'
+                )}
+              </Button>
+              {saveSuccess && <SuccessMessage>Goals saved successfully!</SuccessMessage>}
+            </div>
           )}
+          </form>
         </Card>
 
         {/* Results Section */}
-        <Card>
-          <CardTitle>🎯 Your Goals & Results</CardTitle>
+        <Card as="section" aria-labelledby="results-section-title">
+          <CardTitle id="results-section-title" as="h2">🎯 Your Goals & Results</CardTitle>
           
-          <GoalsGrid>
+          <GoalsGrid role="radiogroup" aria-labelledby="goals-heading">
+            <div id="goals-heading" style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#333' }}>Select Your Fitness Goal:</h3>
+            </div>
             {GOAL_PRESETS.map((goal) => (
               <GoalCard 
                 key={goal.goal}
                 $active={selectedGoal === goal.goal}
                 onClick={() => setSelectedGoal(goal.goal)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedGoal(goal.goal);
+                  }
+                }}
+                tabIndex={0}
+                role="radio"
+                aria-checked={selectedGoal === goal.goal}
+                aria-describedby={`goal-desc-${goal.goal}`}
               >
-                <GoalIcon>{goal.icon}</GoalIcon>
+                <GoalIcon aria-hidden="true">{goal.icon}</GoalIcon>
                 <GoalName>{goal.name}</GoalName>
-                <GoalDescription>{goal.description}</GoalDescription>
+                <GoalDescription id={`goal-desc-${goal.goal}`}>{goal.description}</GoalDescription>
               </GoalCard>
             ))}
           </GoalsGrid>
 
-          {calculation && (
+          {isCalculating && (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <LoadingSpinner style={{ width: '2rem', height: '2rem', marginRight: 0, marginBottom: '1rem' }} />
+              <p>Calculating your personalized recommendations...</p>
+            </div>
+          )}
+          
+          {calculation && !isCalculating && (
             <ResultsSection>
               <StatsGrid>
                 <StatCard>
@@ -553,19 +818,22 @@ const CalorieCalculator: React.FC = () => {
           )}
         </Card>
       </ContentGrid>
+      </main>
 
-      <DisclaimerSection>
-        <DisclaimerIcon>⚠️</DisclaimerIcon>
-        <DisclaimerTitle>Important Disclaimer</DisclaimerTitle>
-        <DisclaimerText>
-          The values shown are estimates based on standard guidelines. Individual results may differ 
-          (typically ±100–300 calories), depending on personal factors such as genetics, hormones, 
-          medical conditions, and metabolic variations. These calculations are for informational purposes 
-          only and should not replace professional medical or nutritional advice. Always consult with 
-          a healthcare provider or registered dietitian before making significant changes to your diet 
-          or exercise routine.
-        </DisclaimerText>
-      </DisclaimerSection>
+      <aside role="complementary" aria-labelledby="disclaimer-title">
+        <DisclaimerSection>
+          <DisclaimerIcon aria-hidden="true">⚠️</DisclaimerIcon>
+          <DisclaimerTitle id="disclaimer-title">Important Disclaimer</DisclaimerTitle>
+          <DisclaimerText>
+            The values shown are estimates based on standard guidelines. Individual results may differ 
+            (typically ±100–300 calories), depending on personal factors such as genetics, hormones, 
+            medical conditions, and metabolic variations. These calculations are for informational purposes 
+            only and should not replace professional medical or nutritional advice. Always consult with 
+            a healthcare provider or registered dietitian before making significant changes to your diet 
+            or exercise routine.
+          </DisclaimerText>
+        </DisclaimerSection>
+      </aside>
     </Container>
   );
 };
