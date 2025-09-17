@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { selectCurrentUser, updateUser } from '../store/slices/userSlice';
 
@@ -124,6 +125,7 @@ const StatLabel = styled.div`
 
 const Profile: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -169,6 +171,18 @@ const Profile: React.FC = () => {
       'all': 'All Regions'
     };
     return regions[region] || region;
+  };
+
+  const formatFitnessGoal = (goal: string) => {
+    const goals: { [key: string]: string } = {
+      'lose_weight': 'Weight Loss',
+      'maintain_weight': 'Weight Maintenance',
+      'gain_weight': 'Weight Gain',
+      'build_muscle': 'Muscle Building',
+      'cut': 'Cutting (Bodybuilding)',
+      'lean_bulk': 'Lean Bulk'
+    };
+    return goals[goal] || goal;
   };
 
   return (
@@ -224,27 +238,65 @@ const Profile: React.FC = () => {
         </ProfileCard>
       </ProfileGrid>
 
-      <StatsCard>
-        <CardTitle>🎯 Daily Goals</CardTitle>
-        <StatsGrid>
-          <StatItem>
-            <StatNumber>{currentUser.dailyCalorieGoal}</StatNumber>
-            <StatLabel>Daily Calories</StatLabel>
-          </StatItem>
-          <StatItem>
-            <StatNumber>{currentUser.dailyStepGoal.toLocaleString()}</StatNumber>
-            <StatLabel>Daily Steps</StatLabel>
-          </StatItem>
-          <StatItem>
-            <StatNumber>{currentUser.dailyWaterGoal / 1000}L</StatNumber>
-            <StatLabel>Daily Water</StatLabel>
-          </StatItem>
-          <StatItem>
-            <StatNumber>{Math.round((currentUser.weight / ((currentUser.height / 100) ** 2)) * 10) / 10}</StatNumber>
-            <StatLabel>BMI</StatLabel>
-          </StatItem>
-        </StatsGrid>
-      </StatsCard>
+        <StatsCard>
+          <CardTitle>🎯 Fitness Goals</CardTitle>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <EditButton onClick={() => navigate('/calculator')}>
+              🧮 Update Goals & Macros
+            </EditButton>
+          </div>
+          <InfoGrid style={{ marginBottom: '2rem' }}>
+            <InfoItem>
+              <InfoLabel>Current Goal</InfoLabel>
+              <InfoValue>{formatFitnessGoal(currentUser.fitnessGoal || 'maintain_weight')}</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Target Weight</InfoLabel>
+              <InfoValue>{currentUser.targetWeight || currentUser.weight} kg</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Weekly Change Goal</InfoLabel>
+              <InfoValue>{currentUser.weeklyWeightChangeGoal ? `${currentUser.weeklyWeightChangeGoal > 0 ? '+' : ''}${currentUser.weeklyWeightChangeGoal} kg/week` : 'Maintain'}</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>BMI</InfoLabel>
+              <InfoValue>{Math.round((currentUser.weight / ((currentUser.height / 100) ** 2)) * 10) / 10}</InfoValue>
+            </InfoItem>
+          </InfoGrid>
+          
+          <StatsGrid>
+            <StatItem>
+              <StatNumber>{currentUser.dailyCalorieGoal}</StatNumber>
+              <StatLabel>Daily Calories</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatNumber>{currentUser.dailyStepGoal.toLocaleString()}</StatNumber>
+              <StatLabel>Daily Steps</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatNumber>{currentUser.dailyWaterGoal / 1000}L</StatNumber>
+              <StatLabel>Daily Water</StatLabel>
+            </StatItem>
+          </StatsGrid>
+        </StatsCard>
+        
+        <StatsCard>
+          <CardTitle>🥗 Daily Macro Targets</CardTitle>
+          <StatsGrid style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+            <StatItem style={{ background: '#e74c3c', color: 'white' }}>
+              <StatNumber>{currentUser.dailyProteinGoal || 120}g</StatNumber>
+              <StatLabel>Protein</StatLabel>
+            </StatItem>
+            <StatItem style={{ background: '#f39c12', color: 'white' }}>
+              <StatNumber>{currentUser.dailyCarbsGoal || 200}g</StatNumber>
+              <StatLabel>Carbohydrates</StatLabel>
+            </StatItem>
+            <StatItem style={{ background: '#9b59b6', color: 'white' }}>
+              <StatNumber>{currentUser.dailyFatsGoal || 80}g</StatNumber>
+              <StatLabel>Fats</StatLabel>
+            </StatItem>
+          </StatsGrid>
+        </StatsCard>
     </Container>
   );
 };

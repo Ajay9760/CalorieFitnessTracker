@@ -162,6 +162,9 @@ const Navbar: React.FC = () => {
           <NavLink to="/progress" $isActive={isActive('/progress')}>
             📈 Progress
           </NavLink>
+          <NavLink to="/calculator" $isActive={isActive('/calculator')}>
+            🧮 Calculator
+          </NavLink>
           <NavLink to="/profile" $isActive={isActive('/profile')}>
             👤 Profile
           </NavLink>

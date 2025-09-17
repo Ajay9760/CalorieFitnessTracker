@@ -401,9 +401,22 @@ const Auth: React.FC = () => {
           activityLevel: 'moderately_active' as const,
           dietType: 'vegetarian' as const,
           region: 'north_indian' as const,
+          
+          // Fitness Goals (default values for login)
+          fitnessGoal: 'maintain_weight' as const,
+          targetWeight: 70,
+          weeklyWeightChangeGoal: 0,
+          
+          // Daily Goals
           dailyCalorieGoal: 2000,
           dailyStepGoal: 10000,
           dailyWaterGoal: 2000,
+          
+          // Macro Targets
+          dailyProteinGoal: 120,
+          dailyCarbsGoal: 200,
+          dailyFatsGoal: 80,
+          
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -416,20 +429,38 @@ const Auth: React.FC = () => {
         
       } else {
         // Signup logic
+        const weight = parseInt(formData.weight);
+        const height = parseInt(formData.height);
+        const age = parseInt(formData.age);
+        const baseCalories = calculateDailyCalorieGoal();
+        
         const user = {
           id: 'demo-user-' + Date.now(),
           email: formData.email,
           name: formData.name,
-          age: parseInt(formData.age),
+          age,
           gender: formData.gender as 'male' | 'female' | 'other',
-          height: parseInt(formData.height),
-          weight: parseInt(formData.weight),
+          height,
+          weight,
           activityLevel: formData.activityLevel as any,
           dietType: formData.dietType as any,
           region: formData.region as any,
-          dailyCalorieGoal: calculateDailyCalorieGoal(),
+          
+          // Default fitness goal for new users
+          fitnessGoal: 'maintain_weight' as const,
+          targetWeight: weight,
+          weeklyWeightChangeGoal: 0,
+          
+          // Daily Goals
+          dailyCalorieGoal: baseCalories,
           dailyStepGoal: 10000,
-          dailyWaterGoal: 2000,
+          dailyWaterGoal: Math.round(weight * 35), // 35ml per kg
+          
+          // Basic macro split for maintenance (25% protein, 45% carbs, 30% fats)
+          dailyProteinGoal: Math.round((baseCalories * 0.25) / 4),
+          dailyCarbsGoal: Math.round((baseCalories * 0.45) / 4),
+          dailyFatsGoal: Math.round((baseCalories * 0.30) / 9),
+          
           createdAt: new Date(),
           updatedAt: new Date()
         };

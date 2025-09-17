@@ -10,6 +10,7 @@ import Gym from './pages/Gym';
 import Progress from './pages/Progress';
 import Profile from './pages/Profile';
 import Auth from './pages/Auth';
+import CalorieCalculator from './pages/CalorieCalculator';
 import Navbar from './components/Navbar';
 import { selectIsAuthenticated } from './store/slices/userSlice';
 import './App.css';
@@ -73,6 +74,14 @@ function AppContent() {
                   <Navbar />
                   <main className="main-content">
                     <Profile />
+                  </main>
+                </>
+              } />
+              <Route path="/calculator" element={
+                <>
+                  <Navbar />
+                  <main className="main-content">
+                    <CalorieCalculator />
                   </main>
                 </>
               } />

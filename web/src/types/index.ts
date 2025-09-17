@@ -10,11 +10,77 @@ export interface User {
   activityLevel: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extra_active';
   dietType: 'vegetarian' | 'vegan' | 'non_veg' | 'keto' | 'high_protein';
   region: 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all';
+  
+  // Goals and Targets
+  fitnessGoal: FitnessGoal;
+  targetWeight?: number; // in kg - for weight loss/gain goals
+  weeklyWeightChangeGoal?: number; // in kg per week (0.25-1kg recommended)
+  
+  // Daily Goals (calculated based on fitness goal)
   dailyCalorieGoal: number;
   dailyStepGoal: number;
   dailyWaterGoal: number; // in ml
+  
+  // Macro Targets (calculated based on fitness goal)
+  dailyProteinGoal: number; // in grams
+  dailyCarbsGoal: number; // in grams
+  dailyFatsGoal: number; // in grams
+  
+  // Body composition goals (optional)
+  bodyFatPercentage?: number;
+  targetBodyFatPercentage?: number;
+  
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Fitness Goal Types
+export type FitnessGoal = 
+  | 'lose_weight' 
+  | 'maintain_weight' 
+  | 'gain_weight' 
+  | 'build_muscle' 
+  | 'cut' 
+  | 'lean_bulk';
+
+export interface CalorieCalculation {
+  bmr: number; // Basal Metabolic Rate
+  tdee: number; // Total Daily Energy Expenditure
+  targetCalories: number; // Adjusted for fitness goal
+  calorieAdjustment: number; // Daily calorie surplus/deficit
+  macros: MacroTargets;
+}
+
+export interface MacroTargets {
+  protein: {
+    grams: number;
+    calories: number;
+    percentage: number;
+  };
+  carbs: {
+    grams: number;
+    calories: number;
+    percentage: number;
+  };
+  fats: {
+    grams: number;
+    calories: number;
+    percentage: number;
+  };
+}
+
+export interface GoalPreset {
+  goal: FitnessGoal;
+  name: string;
+  description: string;
+  calorieAdjustment: number; // percentage adjustment from TDEE
+  macroSplit: {
+    protein: number; // percentage
+    carbs: number; // percentage
+    fats: number; // percentage
+  };
+  recommendedWeightChange: number; // kg per week
+  icon: string;
 }
 
 // Food Types
