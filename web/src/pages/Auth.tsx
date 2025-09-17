@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { setCurrentUser, setIsAuthenticated } from '../store/slices/userSlice';
+import { setCurrentUser, setIsAuthenticated, selectIsAuthenticated } from '../store/slices/userSlice';
 
 const AuthContainer = styled.div`
   min-height: 100vh;
@@ -239,6 +240,8 @@ interface FormErrors {
 
 const Auth: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -255,6 +258,13 @@ const Auth: React.FC = () => {
     dietType: '',
     region: ''
   });
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -401,6 +411,9 @@ const Auth: React.FC = () => {
         dispatch(setCurrentUser(user));
         dispatch(setIsAuthenticated(true));
         
+        // Redirect to dashboard after successful login
+        navigate('/dashboard');
+        
       } else {
         // Signup logic
         const user = {
@@ -423,6 +436,9 @@ const Auth: React.FC = () => {
         
         dispatch(setCurrentUser(user));
         dispatch(setIsAuthenticated(true));
+        
+        // Redirect to dashboard after successful signup
+        navigate('/dashboard');
       }
       
     } catch (error) {
