@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DailyProgress } from '../../types';
+import { SAMPLE_DAILY_PROGRESS } from '../../data/sampleUser';
 
 interface ProgressState {
   todayProgress: DailyProgress | null;
@@ -9,8 +10,9 @@ interface ProgressState {
   error: string | null;
 }
 
+// For development - include sample progress data
 const initialState: ProgressState = {
-  todayProgress: null,
+  todayProgress: SAMPLE_DAILY_PROGRESS, // Remove this in production
   weeklyProgress: [],
   monthlyProgress: [],
   loading: false,

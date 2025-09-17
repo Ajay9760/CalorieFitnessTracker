@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../../types';
+import { SAMPLE_USER } from '../../data/sampleUser';
 
 interface UserState {
   currentUser: User | null;
@@ -8,9 +9,10 @@ interface UserState {
   error: string | null;
 }
 
+// For development - include sample user data
 const initialState: UserState = {
-  currentUser: null,
-  isAuthenticated: false,
+  currentUser: SAMPLE_USER, // Remove this in production
+  isAuthenticated: true, // Remove this in production
   loading: false,
   error: null,
 };

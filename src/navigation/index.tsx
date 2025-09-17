@@ -27,7 +27,7 @@ function BottomTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.gray,
+        tabBarInactiveTintColor: COLORS.gray500,
         tabBarIcon: ({ color, size }) => {
           let name: string = 'circle';
           switch (route.name) {

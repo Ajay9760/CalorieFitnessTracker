@@ -2,84 +2,167 @@
 export const APP_NAME = 'FitTracker';
 export const VERSION = '1.0.0';
 
-// Colors
+// Colors - Elegant and modern palette
 export const COLORS = {
-  primary: '#4CAF50',
-  primaryDark: '#388E3C',
-  secondary: '#FF9800',
-  accent: '#2196F3',
+  // Primary colors - Soft and professional
+  primary: '#6366F1',        // Indigo
+  primaryLight: '#818CF8',   // Light indigo
+  primaryDark: '#4F46E5',    // Dark indigo
   
-  // Status colors
-  success: '#4CAF50',
-  warning: '#FF9800',
-  error: '#F44336',
-  info: '#2196F3',
+  // Secondary colors
+  secondary: '#10B981',      // Emerald
+  secondaryLight: '#34D399', // Light emerald
+  accent: '#F59E0B',         // Amber
   
-  // Neutral colors
+  // Status colors - Subtle and clear
+  success: '#10B981',        // Emerald
+  warning: '#F59E0B',        // Amber
+  error: '#EF4444',          // Red
+  info: '#3B82F6',           // Blue
+  
+  // Neutral colors - Refined grays
   white: '#FFFFFF',
   black: '#000000',
-  gray: '#9E9E9E',
-  lightGray: '#F5F5F5',
-  darkGray: '#424242',
+  gray50: '#F9FAFB',
+  gray100: '#F3F4F6',
+  gray200: '#E5E7EB',
+  gray300: '#D1D5DB',
+  gray400: '#9CA3AF',
+  gray500: '#6B7280',
+  gray600: '#4B5563',
+  gray700: '#374151',
+  gray800: '#1F2937',
+  gray900: '#111827',
   
   // Background colors
-  background: '#F8F9FA',
-  surface: '#FFFFFF',
+  background: '#F9FAFB',     // Very light gray
+  surface: '#FFFFFF',        // Pure white
+  surfaceElevated: '#FFFFFF', // White with shadow
   
-  // Text colors
-  textPrimary: '#212121',
-  textSecondary: '#757575',
-  textTertiary: '#9E9E9E',
+  // Text colors - Better hierarchy
+  textPrimary: '#111827',    // Almost black
+  textSecondary: '#6B7280',  // Medium gray
+  textTertiary: '#9CA3AF',   // Light gray
+  textInverse: '#FFFFFF',    // White text
   
-  // Chart colors
-  chartRed: '#FF6384',
-  chartBlue: '#36A2EB',
-  chartYellow: '#FFCE56',
-  chartGreen: '#4BC0C0',
-  chartPurple: '#9966FF',
-  chartOrange: '#FF9F40',
+  // Chart colors - Harmonious palette
+  chartPrimary: '#6366F1',
+  chartSecondary: '#10B981',
+  chartTertiary: '#F59E0B',
+  chartQuaternary: '#EF4444',
+  chartFifth: '#8B5CF6',     // Purple
+  chartSixth: '#06B6D4',     // Cyan
+  
+  // Border colors
+  border: '#E5E7EB',
+  borderLight: '#F3F4F6',
+  borderDark: '#D1D5DB',
 };
 
-// Dimensions
+// Dimensions - Modern spacing and sizing
 export const DIMENSIONS = {
-  borderRadius: 8,
+  // Border radius - Rounded but not overly soft
+  borderRadius: 12,
+  borderRadiusSmall: 8,
   borderRadiusLarge: 16,
+  borderRadiusXLarge: 24,
+  
+  // Spacing system (4px grid)
+  space1: 4,    // 0.25rem
+  space2: 8,    // 0.5rem
+  space3: 12,   // 0.75rem
+  space4: 16,   // 1rem
+  space5: 20,   // 1.25rem
+  space6: 24,   // 1.5rem
+  space8: 32,   // 2rem
+  space10: 40,  // 2.5rem
+  space12: 48,  // 3rem
+  space16: 64,  // 4rem
+  space20: 80,  // 5rem
+  
+  // Padding shortcuts
   padding: 16,
-  paddingSmall: 8,
+  paddingSmall: 12,
   paddingLarge: 24,
+  paddingXLarge: 32,
+  
+  // Margin shortcuts
   margin: 16,
-  marginSmall: 8,
+  marginSmall: 12,
   marginLarge: 24,
+  marginXLarge: 32,
   
   // Icon sizes
+  iconXSmall: 12,
   iconSmall: 16,
-  iconMedium: 24,
-  iconLarge: 32,
-  iconXLarge: 48,
+  iconMedium: 20,
+  iconLarge: 24,
+  iconXLarge: 32,
+  iconXXLarge: 48,
   
   // Button heights
   buttonHeight: 48,
-  buttonHeightSmall: 36,
+  buttonHeightSmall: 40,
   buttonHeightLarge: 56,
   
   // Input heights
   inputHeight: 48,
+  inputHeightSmall: 40,
+  
+  // Card elevation
+  elevation: {
+    none: 0,
+    small: 2,
+    medium: 4,
+    large: 8,
+    xLarge: 16,
+  },
 };
 
-// Typography
+// Typography - Modern type scale
 export const TYPOGRAPHY = {
-  fontSizeSmall: 12,
-  fontSizeRegular: 14,
-  fontSizeMedium: 16,
-  fontSizeLarge: 18,
-  fontSizeXLarge: 20,
-  fontSizeXXLarge: 24,
-  fontSizeTitle: 28,
+  // Font sizes (responsive type scale)
+  fontSize10: 10,   // Caption
+  fontSize11: 11,   // Small caption
+  fontSize12: 12,   // Small text
+  fontSize14: 14,   // Body text
+  fontSize16: 16,   // Body large
+  fontSize18: 18,   // Subtitle
+  fontSize20: 20,   // Title 3
+  fontSize24: 24,   // Title 2
+  fontSize28: 28,   // Title 1
+  fontSize32: 32,   // Heading
+  fontSize40: 40,   // Large heading
   
+  // Semantic font sizes
+  caption: 12,
+  body: 14,
+  bodyLarge: 16,
+  subtitle: 18,
+  title3: 20,
+  title2: 24,
+  title1: 28,
+  heading: 32,
+  largeHeading: 40,
+  
+  // Font weights
   fontWeightLight: '300' as const,
   fontWeightRegular: '400' as const,
   fontWeightMedium: '500' as const,
+  fontWeightSemiBold: '600' as const,
   fontWeightBold: '700' as const,
+  fontWeightExtraBold: '800' as const,
+  
+  // Line heights
+  lineHeightTight: 1.2,
+  lineHeightNormal: 1.4,
+  lineHeightRelaxed: 1.6,
+  lineHeightLoose: 1.8,
+  
+  // Letter spacing
+  letterSpacingTight: -0.5,
+  letterSpacingNormal: 0,
+  letterSpacingWide: 0.5,
 };
 
 // Calorie Calculation Constants
