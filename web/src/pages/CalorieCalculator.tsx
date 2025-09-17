@@ -486,6 +486,7 @@ const CalorieCalculator: React.FC = () => {
         const mockUser: User = {
           id: currentUser?.id || 'temp',
           email: currentUser?.email || 'temp@example.com',
+          username: currentUser?.username || 'user',
           name: currentUser?.name || 'User',
           age,
           gender,

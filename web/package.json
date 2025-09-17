@@ -2,7 +2,6 @@
   "name": "CalorieFitnessTracker",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ajay9760.github.io/CalorieFitnessTracker",
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
     "@testing-library/dom": "^10.4.1",
@@ -14,7 +13,7 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@types/styled-components": "^5.1.34",
-    "axios": "^1.12.1",
+    "axios": "^1.12.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",

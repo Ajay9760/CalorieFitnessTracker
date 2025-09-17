@@ -189,6 +189,7 @@ const Profile: React.FC = () => {
     <Container>
       <ProfileHeader>
         <ProfileTitle>👤 {currentUser.name}</ProfileTitle>
+        <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '0.5rem' }}>@{currentUser.username}</p>
         <p>Member since {new Date(currentUser.createdAt).toLocaleDateString()}</p>
       </ProfileHeader>
 
@@ -196,6 +197,10 @@ const Profile: React.FC = () => {
         <ProfileCard>
           <CardTitle>📋 Basic Information</CardTitle>
           <InfoGrid>
+            <InfoItem>
+              <InfoLabel>Username</InfoLabel>
+              <InfoValue>@{currentUser.username}</InfoValue>
+            </InfoItem>
             <InfoItem>
               <InfoLabel>Email</InfoLabel>
               <InfoValue>{currentUser.email}</InfoValue>

@@ -35,6 +35,16 @@ app.use(cors()); // Enable CORS
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`📝 ${req.method} ${req.url} - ${new Date().toISOString()}`);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+  }
+  next();
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -110,7 +120,7 @@ async function startServer() {
     
     // Sync database (create tables if they don't exist)
     if (process.env.NODE_ENV !== 'production') {
-      await sequelize.sync({ alter: true });
+      await sequelize.sync({ force: false });
       console.log('📊 Database synchronized');
     }
     

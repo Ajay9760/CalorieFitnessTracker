@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { setCurrentUser, setIsAuthenticated, selectIsAuthenticated } from '../store/slices/userSlice';
+import { AppDispatch } from '../store';
+import { 
+  selectIsAuthenticated, 
+  selectIsLoading, 
+  selectError,
+  loginUser,
+  registerUser,
+  setError 
+} from '../store/slices/userSlice';
 
 const AuthContainer = styled.div`
   min-height: 100vh;
@@ -213,6 +221,7 @@ const WelcomeText = styled.div`
 interface FormData {
   email: string;
   password: string;
+  username: string;
   name: string;
   confirmPassword: string;
   age: string;
@@ -227,6 +236,7 @@ interface FormData {
 interface FormErrors {
   email?: string;
   password?: string;
+  username?: string;
   name?: string;
   confirmPassword?: string;
   age?: string;
@@ -239,15 +249,17 @@ interface FormErrors {
 }
 
 const Auth: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isLoading = useSelector(selectIsLoading);
+  const userError = useSelector(selectError);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
+    username: '',
     name: '',
     confirmPassword: '',
     age: '',
@@ -259,12 +271,26 @@ const Auth: React.FC = () => {
     region: ''
   });
 
+  // Clear any previous errors when component mounts or tab changes
+  useEffect(() => {
+    if (userError) {
+      dispatch(setError(null));
+    }
+  }, [activeTab, dispatch, userError]);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
+
+  // Handle API errors
+  useEffect(() => {
+    if (userError) {
+      setErrors({ email: userError });
+    }
+  }, [userError]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -286,6 +312,17 @@ const Auth: React.FC = () => {
 
     // Additional validations for signup
     if (activeTab === 'signup') {
+      // Username validation
+      if (!formData.username) {
+        newErrors.username = 'Username is required';
+      } else if (formData.username.length < 3) {
+        newErrors.username = 'Username must be at least 3 characters';
+      } else if (formData.username.length > 20) {
+        newErrors.username = 'Username must be less than 20 characters';
+      } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+        newErrors.username = 'Username can only contain letters, numbers, and underscores';
+      }
+      
       if (!formData.name) {
         newErrors.name = 'Name is required';
       }
@@ -382,76 +419,49 @@ const Auth: React.FC = () => {
       return;
     }
     
-    setLoading(true);
+    // Clear previous errors
+    setErrors({});
+    dispatch(setError(null));
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       if (activeTab === 'login') {
-        // Login logic
-        const user = {
-          id: 'demo-user-' + Date.now(),
+        // Login with email and password
+        const resultAction = await dispatch(loginUser({
           email: formData.email,
-          name: formData.email.split('@')[0],
-          age: 25,
-          gender: 'male' as const,
-          height: 170,
-          weight: 70,
-          activityLevel: 'moderately_active' as const,
-          dietType: 'vegetarian' as const,
-          region: 'north_indian' as const,
-          
-          // Fitness Goals (default values for login)
-          fitnessGoal: 'maintain_weight' as const,
-          targetWeight: 70,
-          weeklyWeightChangeGoal: 0,
-          
-          // Daily Goals
-          dailyCalorieGoal: 2000,
-          dailyStepGoal: 10000,
-          dailyWaterGoal: 2000,
-          
-          // Macro Targets
-          dailyProteinGoal: 120,
-          dailyCarbsGoal: 200,
-          dailyFatsGoal: 80,
-          
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
+          password: formData.password
+        }));
         
-        dispatch(setCurrentUser(user));
-        dispatch(setIsAuthenticated(true));
-        
-        // Redirect to dashboard after successful login
-        navigate('/dashboard');
+        if (loginUser.fulfilled.match(resultAction)) {
+          // Login successful - Redux will handle authentication state
+          // Navigation will happen via the useEffect hook watching isAuthenticated
+        }
         
       } else {
-        // Signup logic
+        // Register new user
         const weight = parseInt(formData.weight);
         const height = parseInt(formData.height);
         const age = parseInt(formData.age);
         const baseCalories = calculateDailyCalorieGoal();
         
-        const user = {
-          id: 'demo-user-' + Date.now(),
+        const registrationData = {
           email: formData.email,
+          password: formData.password,
+          username: formData.username,
           name: formData.name,
           age,
           gender: formData.gender as 'male' | 'female' | 'other',
           height,
           weight,
-          activityLevel: formData.activityLevel as any,
-          dietType: formData.dietType as any,
-          region: formData.region as any,
+          activityLevel: formData.activityLevel as 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extra_active',
+          dietType: formData.dietType as 'vegetarian' | 'vegan' | 'non_veg' | 'keto' | 'high_protein',
+          region: formData.region as 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all',
           
-          // Default fitness goal for new users
+          // Default fitness goals for new users
           fitnessGoal: 'maintain_weight' as const,
           targetWeight: weight,
           weeklyWeightChangeGoal: 0,
           
-          // Daily Goals
+          // Calculated daily goals
           dailyCalorieGoal: baseCalories,
           dailyStepGoal: 10000,
           dailyWaterGoal: Math.round(weight * 35), // 35ml per kg
@@ -459,24 +469,20 @@ const Auth: React.FC = () => {
           // Basic macro split for maintenance (25% protein, 45% carbs, 30% fats)
           dailyProteinGoal: Math.round((baseCalories * 0.25) / 4),
           dailyCarbsGoal: Math.round((baseCalories * 0.45) / 4),
-          dailyFatsGoal: Math.round((baseCalories * 0.30) / 9),
-          
-          createdAt: new Date(),
-          updatedAt: new Date()
+          dailyFatsGoal: Math.round((baseCalories * 0.30) / 9)
         };
         
-        dispatch(setCurrentUser(user));
-        dispatch(setIsAuthenticated(true));
+        const resultAction = await dispatch(registerUser(registrationData));
         
-        // Redirect to dashboard after successful signup
-        navigate('/dashboard');
+        if (registerUser.fulfilled.match(resultAction)) {
+          // Registration successful - Redux will handle authentication state
+          // Navigation will happen via the useEffect hook watching isAuthenticated
+        }
       }
       
     } catch (error) {
       console.error('Authentication error:', error);
-      setErrors({ email: 'Authentication failed. Please try again.' });
-    } finally {
-      setLoading(false);
+      // Error handling is done by Redux and useEffect hook
     }
   };
 
@@ -507,17 +513,37 @@ const Auth: React.FC = () => {
 
         <Form onSubmit={handleSubmit}>
           {activeTab === 'signup' && (
-            <FormGroup>
-              <label>Full Name</label>
-              <Input
-                type="text"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                $error={!!errors.name}
-              />
-              {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
-            </FormGroup>
+            <>
+              <FormGroup>
+                <label>Full Name</label>
+                <Input
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  $error={!!errors.name}
+                />
+                {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
+              </FormGroup>
+              
+              <FormGroup>
+                <label>Username</label>
+                <Input
+                  type="text"
+                  placeholder="Choose a unique username"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  $error={!!errors.username}
+                  maxLength={20}
+                />
+                {errors.username && <ErrorMessage>{errors.username}</ErrorMessage>}
+                {!errors.username && formData.username && (
+                  <div style={{ fontSize: '0.75rem', color: '#27ae60', marginTop: '0.25rem' }}>
+                    ✅ Username available
+                  </div>
+                )}
+              </FormGroup>
+            </>
           )}
 
           <FormGroup>
@@ -666,8 +692,8 @@ const Auth: React.FC = () => {
             </>
           )}
 
-          <SubmitButton type="submit" $loading={loading}>
-            {loading ? '⏳ Processing...' : activeTab === 'login' ? '🚀 Sign In' : '🎯 Create Account'}
+          <SubmitButton type="submit" $loading={isLoading}>
+            {isLoading ? '⏳ Processing...' : activeTab === 'login' ? '🚀 Sign In' : '🎯 Create Account'}
           </SubmitButton>
         </Form>
 

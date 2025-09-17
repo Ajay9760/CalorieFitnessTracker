@@ -172,8 +172,8 @@ const Navbar: React.FC = () => {
           <UserSection>
             {currentUser && (
               <UserInfo>
-                <UserName>👋 {currentUser.name}</UserName>
-                <UserEmail>{currentUser.email}</UserEmail>
+                <UserName>👋 @{currentUser.username}</UserName>
+                <UserEmail>{currentUser.name}</UserEmail>
               </UserInfo>
             )}
             <LogoutButton onClick={handleLogout}>
