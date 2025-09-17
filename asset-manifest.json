@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/CalorieFitnessTracker/static/css/main.dce7c551.css",
-    "main.js": "/CalorieFitnessTracker/static/js/main.da2d691d.js",
+    "main.js": "/CalorieFitnessTracker/static/js/main.1882c41c.js",
     "static/js/206.91933176.chunk.js": "/CalorieFitnessTracker/static/js/206.91933176.chunk.js",
     "index.html": "/CalorieFitnessTracker/index.html"
   },
   "entrypoints": [
     "static/css/main.dce7c551.css",
-    "static/js/main.da2d691d.js"
+    "static/js/main.1882c41c.js"
   ]
 }
