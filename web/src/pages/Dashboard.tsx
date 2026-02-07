@@ -9,12 +9,6 @@ const Container = styled.div`
   padding: 2rem;
 `;
 
-const Header = styled.h2`
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -476,7 +470,10 @@ const Dashboard: React.FC = () => {
     (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
   const totalCaloriesBurned = todaysWorkouts.reduce((total: number, workout: any) => total + workout.caloriesBurned, 0);
-  const totalWorkoutDuration = todaysWorkouts.reduce((total: number, workout: any) => total + workout.duration, 0);
+  const dailyGoal = currentUser?.dailyCalorieGoal;
+  const caloriesRemaining = dailyGoal
+    ? Math.max(dailyGoal - (todaysCalories - totalCaloriesBurned), 0)
+    : null;
 
   // Fitness quotes array
   const fitnessQuotes = [
@@ -512,6 +509,24 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container>
+      <StatsGrid>
+        <StatCard>
+          <StatValue>{dailyGoal ? dailyGoal : '--'}</StatValue>
+          <StatLabel>Daily Calorie Goal</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue>{todaysCalories || '--'}</StatValue>
+          <StatLabel>Calories Consumed</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue>{totalCaloriesBurned || '--'}</StatValue>
+          <StatLabel>Calories Burned</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue>{caloriesRemaining !== null ? caloriesRemaining : '--'}</StatValue>
+          <StatLabel>Calories Remaining</StatLabel>
+        </StatCard>
+      </StatsGrid>
       <WelcomeMessage>
         <FitnessEmojis>💪🏃‍♂️🥗</FitnessEmojis>
         <h1>🙏 नमस्ते! Start Your Wellness Journey</h1>

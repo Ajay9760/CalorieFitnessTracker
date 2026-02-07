@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../store';
 import { addActivity } from '../store/slices/activitySlice';
-import { WORKOUT_DATABASE, getWorkoutsByCategory, getWorkoutById, searchWorkouts } from '../data/workoutDatabase';
+import { WORKOUT_DATABASE, searchWorkouts } from '../data/workoutDatabase';
 import { WorkoutExercise, WorkoutEntry, WorkoutCategory } from '../types';
 
 const Container = styled.div`
@@ -504,6 +504,8 @@ const Activity: React.FC = () => {
     setSelectedWorkout(null);
   };
 
+  const clampMin = (value: number, min: number) => (Number.isNaN(value) ? min : Math.max(value, min));
+
   return (
     <Container>
       <Header>
@@ -604,11 +606,11 @@ const Activity: React.FC = () => {
         </TabContent>
       </TabSection>
 
-      <Modal $show={showModal}>
+      <Modal $show={showModal} role="dialog" aria-modal="true" aria-labelledby="workout-modal-title">
         <ModalContent>
           <ModalHeader>
-            <h2>Log Workout: {selectedWorkout?.name}</h2>
-            <CloseButton onClick={() => setShowModal(false)}>×</CloseButton>
+            <h2 id="workout-modal-title">Log Workout: {selectedWorkout?.name}</h2>
+            <CloseButton onClick={() => setShowModal(false)} aria-label="Close">×</CloseButton>
           </ModalHeader>
           
           {selectedWorkout && (
@@ -619,7 +621,7 @@ const Activity: React.FC = () => {
                   type="number"
                   min="1"
                   value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({...prev, duration: parseInt(e.target.value) || 0}))}
+                  onChange={(e) => setFormData(prev => ({...prev, duration: clampMin(parseInt(e.target.value, 10), 1)}))}
                 />
               </FormGroup>
               
@@ -633,14 +635,14 @@ const Activity: React.FC = () => {
                         placeholder="Reps"
                         min="1"
                         value={rep}
-                        onChange={(e) => updateSet(index, 'reps', parseInt(e.target.value) || 0)}
+                        onChange={(e) => updateSet(index, 'reps', clampMin(parseInt(e.target.value, 10), 1))}
                       />
                       <input
                         type="number"
                         placeholder="Weight (kg)"
                         min="0"
                         value={formData.weight[index]}
-                        onChange={(e) => updateSet(index, 'weight', parseInt(e.target.value) || 0)}
+                        onChange={(e) => updateSet(index, 'weight', clampMin(parseInt(e.target.value, 10), 0))}
                       />
                     </SetInputs>
                   ))}
@@ -656,7 +658,7 @@ const Activity: React.FC = () => {
                     min="0"
                     step="0.1"
                     value={formData.distance}
-                    onChange={(e) => setFormData(prev => ({...prev, distance: parseFloat(e.target.value) || 0}))}
+                    onChange={(e) => setFormData(prev => ({...prev, distance: clampMin(parseFloat(e.target.value), 0)}))}
                   />
                 </FormGroup>
               )}

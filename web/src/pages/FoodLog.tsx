@@ -118,6 +118,24 @@ const AddButton = styled.button`
   &:hover {
     transform: translateY(-2px);
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const Toast = styled.div<{ $visible: boolean }>`
+  position: sticky;
+  top: 1rem;
+  background: #10b981;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: ${props => props.$visible ? 'block' : 'none'};
 `;
 
 const MealTypeSection = styled.div`
@@ -141,6 +159,60 @@ const MealTypeButton = styled.button<{ $active: boolean }>`
   transition: all 0.2s;
 `;
 
+const ModalBackdrop = styled.div<{ $open: boolean }>`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: ${props => props.$open ? 'flex' : 'none'};
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalCard = styled.div`
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  width: min(540px, 92vw);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+  }
+`;
+
+const ModalClose = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+`;
+
+const FormRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SummaryCard = styled.div`
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+`;
+
 const FoodLog: React.FC = () => {
   const dispatch = useDispatch();
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
@@ -149,6 +221,10 @@ const FoodLog: React.FC = () => {
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedMealType, setSelectedMealType] = useState<MealType>('breakfast');
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedServing, setSelectedServing] = useState<string>('grams');
+  const [toastMessage, setToastMessage] = useState('');
 
   const filteredFoods = useMemo(() => {
     return INDIAN_FOOD_DATABASE.filter(food => {
@@ -162,27 +238,55 @@ const FoodLog: React.FC = () => {
     });
   }, [searchQuery, selectedRegion, selectedCategory]);
 
-  const handleAddMeal = (food: FoodItem) => {
+  const getServingOptions = (food: FoodItem) => [
+    { unit: 'grams', grams: 1, description: 'grams' },
+    ...food.servingSizes
+  ];
+
+  const calculateNutrition = (food: FoodItem, qty: number, servingUnit: string) => {
+    const serving = getServingOptions(food).find(option => option.unit === servingUnit);
+    const grams = serving ? qty * serving.grams : qty;
+    const multiplier = grams / 100;
+    return {
+      grams,
+      calories: Math.round(food.calories * multiplier),
+      macros: {
+        protein: +(food.macros.protein * multiplier).toFixed(1),
+        carbs: +(food.macros.carbs * multiplier).toFixed(1),
+        fats: +(food.macros.fats * multiplier).toFixed(1),
+        fiber: +(food.macros.fiber * multiplier).toFixed(1),
+        sugar: +(food.macros.sugar * multiplier).toFixed(1),
+        sodium: Math.round(food.macros.sodium * multiplier),
+      },
+    };
+  };
+
+  const handleAddMeal = () => {
+    if (!selectedFood) return;
+    const nutrition = calculateNutrition(selectedFood, quantity, selectedServing);
     const meal: MealEntry = {
       id: Date.now().toString(),
       userId: 'demo-user',
-      foodId: food.id,
-      foodName: food.name,
-      quantity: 100, // Default 100g serving
-      servingSize: food.servingSizes[0]?.unit || 'grams',
+      foodId: selectedFood.id,
+      foodName: selectedFood.name,
+      quantity: nutrition.grams,
+      servingSize: selectedServing,
       mealType: selectedMealType,
-      calories: food.calories,
-      macros: food.macros,
+      calories: nutrition.calories,
+      macros: nutrition.macros,
       timestamp: new Date(),
     };
     
     dispatch(addMeal(meal));
-    alert(`Added ${food.name} to your ${selectedMealType}!`);
+    setSelectedFood(null);
+    setToastMessage(`Added ${selectedFood.name} to your ${selectedMealType}!`);
+    setTimeout(() => setToastMessage(''), 2500);
   };
 
   return (
     <Container>
       <Header>🍛 Indian Food Logger</Header>
+      <Toast $visible={!!toastMessage}>{toastMessage}</Toast>
       
       <SearchSection>
         <MealTypeSection>
@@ -263,7 +367,11 @@ const FoodLog: React.FC = () => {
               Serving: {food.servingSizes[0]?.description || '100g'}
             </div>
             
-            <AddButton onClick={() => handleAddMeal(food)}>
+            <AddButton onClick={() => {
+              setSelectedFood(food);
+              setQuantity(1);
+              setSelectedServing(food.servingSizes[0]?.unit || 'grams');
+            }}>
               Add to {selectedMealType.charAt(0).toUpperCase() + selectedMealType.slice(1)}
             </AddButton>
           </FoodCard>
@@ -280,6 +388,58 @@ const FoodLog: React.FC = () => {
           ))}
         </SearchSection>
       )}
+
+      <ModalBackdrop $open={!!selectedFood} role="dialog" aria-modal="true" aria-labelledby="food-log-title">
+        {selectedFood && (
+          <ModalCard>
+            <ModalHeader>
+              <h3 id="food-log-title">Log {selectedFood.name}</h3>
+              <ModalClose onClick={() => setSelectedFood(null)} aria-label="Close">×</ModalClose>
+            </ModalHeader>
+            <FormRow>
+              <div>
+                <label htmlFor="quantity">Quantity</label>
+                <SearchInput
+                  id="quantity"
+                  type="number"
+                  min="0.25"
+                  step="0.25"
+                  value={quantity}
+                  onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
+                />
+              </div>
+              <div>
+                <label htmlFor="serving">Serving</label>
+                <Select
+                  id="serving"
+                  value={selectedServing}
+                  onChange={(e) => setSelectedServing(e.target.value)}
+                >
+                  {getServingOptions(selectedFood).map(option => (
+                    <option key={option.unit} value={option.unit}>
+                      {option.description || option.unit}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </FormRow>
+            <SummaryCard>
+              {(() => {
+                const nutrition = calculateNutrition(selectedFood, quantity, selectedServing);
+                return (
+                  <>
+                    <p><strong>{nutrition.calories} cal</strong> • {nutrition.grams.toFixed(0)}g total</p>
+                    <p>Protein: {nutrition.macros.protein}g • Carbs: {nutrition.macros.carbs}g • Fats: {nutrition.macros.fats}g</p>
+                  </>
+                );
+              })()}
+            </SummaryCard>
+            <AddButton onClick={handleAddMeal} disabled={quantity <= 0}>
+              Log {selectedMealType.charAt(0).toUpperCase() + selectedMealType.slice(1)}
+            </AddButton>
+          </ModalCard>
+        )}
+      </ModalBackdrop>
     </Container>
   );
 };
