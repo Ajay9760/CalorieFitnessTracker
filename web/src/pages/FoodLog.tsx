@@ -1,35 +1,54 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../store';
 import { addMeal } from '../store/slices/mealSlice';
 import { INDIAN_FOOD_DATABASE } from '../data/indianFoodDatabase';
+import { foodApi } from '../services/api';
 import { FoodItem, MealEntry, MealType } from '../types';
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;
 
-const Header = styled.h2`
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
+const HeaderCard = styled.div`
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0.95));
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+
+  p {
+    color: #475569;
+    font-size: 1.05rem;
+  }
 `;
 
 const SearchSection = styled.div`
   background: white;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 1.5rem;
 `;
 
 const SearchInput = styled.input`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #ddd;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
   margin-bottom: 1rem;
@@ -44,12 +63,11 @@ const FilterSection = styled.div`
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
 `;
 
 const Select = styled.select`
   padding: 0.5rem;
-  border: 2px solid #ddd;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   background: white;
 `;
@@ -62,10 +80,16 @@ const FoodGrid = styled.div`
 
 const FoodCard = styled.div`
   background: white;
-  border-radius: 10px;
+  border-radius: 18px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #667eea;
+  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+  }
 `;
 
 const FoodName = styled.h3`
@@ -90,7 +114,7 @@ const MacroInfo = styled.div`
 const MacroItem = styled.div`
   text-align: center;
   padding: 0.5rem;
-  background: #f8f9fa;
+  background: #f8fafc;
   border-radius: 4px;
 `;
 
@@ -213,6 +237,22 @@ const SummaryCard = styled.div`
   margin-top: 1rem;
 `;
 
+const LoadMoreButton = styled.button`
+  margin: 2rem auto 0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+  }
+`;
+
 const FoodLog: React.FC = () => {
   const dispatch = useDispatch();
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
@@ -225,6 +265,10 @@ const FoodLog: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedServing, setSelectedServing] = useState<string>('grams');
   const [toastMessage, setToastMessage] = useState('');
+  const [apiFoods, setApiFoods] = useState<FoodItem[]>([]);
+  const [apiOffset, setApiOffset] = useState(0);
+  const [apiHasMore, setApiHasMore] = useState(false);
+  const [apiLoading, setApiLoading] = useState(false);
 
   const filteredFoods = useMemo(() => {
     return INDIAN_FOOD_DATABASE.filter(food => {
@@ -237,6 +281,63 @@ const FoodLog: React.FC = () => {
       return matchesSearch && matchesRegion && matchesCategory;
     });
   }, [searchQuery, selectedRegion, selectedCategory]);
+
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setApiFoods([]);
+      setApiOffset(0);
+      setApiHasMore(false);
+      return;
+    }
+
+    let isMounted = true;
+    const timeout = setTimeout(async () => {
+      try {
+        setApiLoading(true);
+        const response = await foodApi.search(searchQuery.trim(), {
+          category: selectedCategory !== 'all' ? selectedCategory : undefined,
+          region: selectedRegion !== 'all' ? selectedRegion : undefined,
+          limit: 20,
+          offset: 0,
+        });
+        if (!isMounted) return;
+        const { foods, pagination } = response.data.data;
+        setApiFoods(foods);
+        setApiOffset(pagination.offset + pagination.limit);
+        setApiHasMore(pagination.hasMore);
+      } catch (error) {
+        setApiFoods([]);
+        setApiHasMore(false);
+      } finally {
+        if (isMounted) setApiLoading(false);
+      }
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, [searchQuery, selectedCategory, selectedRegion]);
+
+  const loadMoreFoods = async () => {
+    try {
+      setApiLoading(true);
+      const response = await foodApi.search(searchQuery.trim(), {
+        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+        region: selectedRegion !== 'all' ? selectedRegion : undefined,
+        limit: 20,
+        offset: apiOffset,
+      });
+      const { foods, pagination } = response.data.data;
+      setApiFoods(prev => [...prev, ...foods]);
+      setApiOffset(pagination.offset + pagination.limit);
+      setApiHasMore(pagination.hasMore);
+    } catch (error) {
+      setApiHasMore(false);
+    } finally {
+      setApiLoading(false);
+    }
+  };
 
   const getServingOptions = (food: FoodItem) => [
     { unit: 'grams', grams: 1, description: 'grams' },
@@ -285,7 +386,10 @@ const FoodLog: React.FC = () => {
 
   return (
     <Container>
-      <Header>🍛 Indian Food Logger</Header>
+      <HeaderCard>
+        <h2>🍛 Smart Indian Food Logger</h2>
+        <p>Search by dish, filter by region, and log with precise portion controls.</p>
+      </HeaderCard>
       <Toast $visible={!!toastMessage}>{toastMessage}</Toast>
       
       <SearchSection>
@@ -339,7 +443,7 @@ const FoodLog: React.FC = () => {
       </SearchSection>
 
       <FoodGrid>
-        {filteredFoods.slice(0, 20).map((food) => (
+        {(searchQuery.trim().length >= 2 ? apiFoods : filteredFoods.slice(0, 20)).map((food) => (
           <FoodCard key={food.id}>
             <FoodName>{food.name}</FoodName>
             {food.nameHindi && <FoodNameHindi>{food.nameHindi}</FoodNameHindi>}
@@ -377,6 +481,12 @@ const FoodLog: React.FC = () => {
           </FoodCard>
         ))}
       </FoodGrid>
+
+      {searchQuery.trim().length >= 2 && apiHasMore && (
+        <LoadMoreButton onClick={loadMoreFoods} disabled={apiLoading}>
+          {apiLoading ? 'Loading…' : 'Load more foods'}
+        </LoadMoreButton>
+      )}
 
       {todaysMeals.length > 0 && (
         <SearchSection style={{ marginTop: '2rem' }}>

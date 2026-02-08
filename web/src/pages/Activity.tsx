@@ -403,6 +403,7 @@ interface WorkoutFormData {
 const Activity: React.FC = () => {
   const dispatch = useDispatch();
   const { activities } = useSelector((state: RootState) => state.activities);
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const [activeTab, setActiveTab] = useState<'browse' | 'today'>('browse');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<WorkoutCategory | 'all'>('all');
@@ -477,10 +478,27 @@ const Activity: React.FC = () => {
     }));
   };
 
+  const intensityMultipliers = {
+    low: 0.8,
+    moderate: 1,
+    high: 1.15,
+    extreme: 1.3,
+  };
+
+  const weightFactor = currentUser?.weight ? currentUser.weight / 70 : 1;
+  const estimatedCalories = selectedWorkout
+    ? Math.round(
+        selectedWorkout.caloriesPerMinute *
+          formData.duration *
+          intensityMultipliers[formData.intensity] *
+          weightFactor
+      )
+    : 0;
+
   const handleSubmit = () => {
     if (!selectedWorkout) return;
     
-    const caloriesBurned = Math.round(selectedWorkout.caloriesPerMinute * formData.duration);
+    const caloriesBurned = estimatedCalories;
     
     const workoutEntry: WorkoutEntry = {
       id: Date.now().toString(),
@@ -686,7 +704,12 @@ const Activity: React.FC = () => {
               </FormGroup>
               
               <div style={{textAlign: 'center', margin: '1rem 0'}}>
-                <strong>Estimated Calories: {Math.round(selectedWorkout.caloriesPerMinute * formData.duration)}</strong>
+                <strong>Estimated Calories: {estimatedCalories}</strong>
+                {currentUser?.weight && (
+                  <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    Based on {currentUser.weight}kg and {formData.intensity} intensity
+                  </div>
+                )}
               </div>
               
               <SubmitButton onClick={handleSubmit}>

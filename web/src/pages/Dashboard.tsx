@@ -1,459 +1,232 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { RootState } from '../store';
 
-const Container = styled.div`
+const Page = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const Hero = styled.section`
+  background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.35), transparent 55%),
+    linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+  border-radius: 28px;
+  padding: 3rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+  animation: heroFloat 10s ease-in-out infinite;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260"><g fill="none" stroke="%23ffffff" stroke-opacity="0.08"><circle cx="130" cy="130" r="120"/><circle cx="200" cy="60" r="40"/><circle cx="60" cy="200" r="30"/></g></svg>');
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+  }
+
+  @keyframes heroFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+`;
+
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  align-items: center;
+`;
+
+const HeroText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin: 0;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+  }
+`;
+
+const HeroActions = styled.div`
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const HeroButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #0f172a;
+  background: #f8fafc;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.3);
+  }
+
+  &.outline {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
 `;
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
 `;
 
 const StatCard = styled.div`
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
-  border-radius: 20px;
-  padding: 2.5rem;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-  text-align: center;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
-    background-size: 200% 100%;
-    animation: slideGradient 3s ease-in-out infinite;
-  }
-
-  &:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
-  }
-
-  @keyframes slideGradient {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-`;
-
-const StatValue = styled.div`
-  font-size: 3rem;
-  font-weight: 800;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
-  animation: pulse 2s ease-in-out infinite;
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-`;
-
-const StatLabel = styled.div`
-  color: #555;
-  font-size: 1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  opacity: 0.8;
-`;
-
-const WelcomeMessage = styled.div`
-  background: 
-    linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 50%, rgba(240, 147, 251, 0.9) 100%),
-    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="healthy-pattern" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="20" r="2" fill="%23ffffff" opacity="0.1"/><circle cx="20" cy="50" r="1.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.1"/><path d="M10,10 Q30,5 50,10 T90,10" stroke="%23ffffff" stroke-width="0.5" fill="none" opacity="0.05"/></pattern></defs><rect width="100%" height="100%" fill="url(%23healthy-pattern)"/></svg>');
-  background-size: cover, 100px 100px;
-  color: white;
-  padding: 5rem 3rem;
-  border-radius: 25px;
-  text-align: center;
-  margin-bottom: 3rem;
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-  position: relative;
-  overflow: hidden;
-  min-height: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 300%;
-    height: 300%;
-    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 50%);
-    animation: rotate 20s linear infinite;
-  }
-
-  &::after {
-    content: '🌟';
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    font-size: 3rem;
-    animation: twinkle 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  @keyframes twinkle {
-    from { opacity: 0.5; transform: scale(1); }
-    to { opacity: 1; transform: scale(1.1); }
-  }
-
-  h1 {
-    position: relative;
-    z-index: 1;
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    font-weight: 900;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-    line-height: 1.2;
-    
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
-    }
-  }
-
-  p {
-    position: relative;
-    z-index: 1;
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.95;
-    line-height: 1.6;
-    max-width: 600px;
-    
-    @media (max-width: 768px) {
-      font-size: 1.2rem;
-    }
-  }
-`;
-
-const FitnessQuote = styled.div`
-  position: relative;
-  z-index: 1;
-  margin-top: 2rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-`;
-
-const QuoteText = styled.blockquote`
-  font-size: 1.4rem;
-  font-style: italic;
-  margin: 0 0 1rem 0;
-  line-height: 1.6;
-  font-weight: 300;
-  
-  &::before {
-    content: '"';
-    font-size: 2rem;
-    opacity: 0.7;
-  }
-  
-  &::after {
-    content: '"';
-    font-size: 2rem;
-    opacity: 0.7;
-  }
-`;
-
-const QuoteAuthor = styled.cite`
-  font-size: 1rem;
-  opacity: 0.8;
-  font-weight: 500;
-  
-  &::before {
-    content: '— ';
-  }
-`;
-
-const FitnessEmojis = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 2rem;
-  z-index: 1;
-  animation: bounce 2s infinite;
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-10px);
-    }
-    60% {
-      transform: translateY(-5px);
-    }
-  }
-`;
-
-const HeroStats = styled.div`
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-top: 2rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-`;
-
-const HeroStatCard = styled.div`
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
   padding: 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const HeroStatValue = styled.div`
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-`;
-
-const HeroStatLabel = styled.div`
-  font-size: 0.9rem;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-`;
-
-const MotivationalSection = styled.div`
-  margin-top: 2rem;
-`;
-
-const MotivationalCard = styled.div`
-  background: 
-    linear-gradient(135deg, rgba(255, 234, 167, 0.95) 0%, rgba(253, 203, 110, 0.95) 50%, rgba(225, 112, 85, 0.95) 100%),
-    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><pattern id="food-pattern" patternUnits="userSpaceOnUse" width="40" height="40"><text x="5" y="15" font-size="12" fill="%23ffffff" opacity="0.1">🍛</text><text x="25" y="35" font-size="10" fill="%23ffffff" opacity="0.1">🥗</text></pattern></defs><rect width="100%" height="100%" fill="url(%23food-pattern)"/></svg>');
-  background-size: cover, 40px 40px;
-  color: #2d3436;
-  padding: 4rem 3rem;
-  border-radius: 25px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(253, 203, 110, 0.4);
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '🥘';
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 2.5rem;
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  &::after {
-    content: '🏃‍♂️';
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    font-size: 2.5rem;
-    animation: bounce 2s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateX(0px); }
-    50% { transform: translateX(10px); }
-  }
-  
-  h3 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  p {
-    font-size: 1.3rem;
-    margin-bottom: 2.5rem;
-    line-height: 1.7;
-    opacity: 0.9;
-    font-weight: 500;
-  }
-`;
-
-const MotivationalStats = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin: 2rem 0;
-  
-  div {
-    text-align: center;
-    
-    strong {
-      display: block;
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      color: #2d3436;
-    }
-    
-    span {
-      font-size: 1rem;
-      opacity: 0.8;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-`;
-
-const CallToAction = styled.div`
-  background: rgba(45, 52, 54, 0.1);
-  padding: 2rem;
-  border-radius: 15px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin: 2rem 0 1.5rem 0;
-  border: 2px dashed rgba(45, 52, 54, 0.3);
-  backdrop-filter: blur(5px);
-`;
-
-const FoodShowcase = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-`;
-
-const FoodIcon = styled.div`
+  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-size: 2.5rem;
-  animation: wiggle 3s ease-in-out infinite;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
   &:hover {
-    transform: scale(1.2);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
   }
-  
+
+  h3 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: #111827;
+  }
+
   span {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #2d3436;
-  }
-  
-  &:nth-child(1) { animation-delay: 0s; }
-  &:nth-child(2) { animation-delay: 0.3s; }
-  &:nth-child(3) { animation-delay: 0.6s; }
-  &:nth-child(4) { animation-delay: 0.9s; }
-  &:nth-child(5) { animation-delay: 1.2s; }
-  
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(3deg); }
-    75% { transform: rotate(-3deg); }
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #64748b;
+    font-weight: 600;
   }
 `;
 
-const MealSummaryCard = styled.div`
-  background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-  color: #2d3436;
-  padding: 2.5rem;
-  border-radius: 20px;
-  margin-top: 2rem;
-  box-shadow: 0 10px 25px rgba(168, 230, 207, 0.3);
-  
-  h3 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: #00b894;
+const InsightGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+`;
+
+const InsightCard = styled.div`
+  background: white;
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const RingWrapper = styled.div`
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+`;
+
+const RingValue = styled.div`
+  position: absolute;
+  text-align: center;
+  font-weight: 700;
+  color: #111827;
+`;
+
+const MacroBar = styled.div<{ $color: string; $width: number }>`
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: ${props => props.$width}%;
+    background: ${props => props.$color};
+    border-radius: inherit;
+    transition: width 0.4s ease;
   }
+`;
+
+const QuoteCard = styled(InsightCard)`
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(248, 250, 252, 0.9));
+
+  p {
+    font-size: 1.05rem;
+    color: #0f172a;
+    line-height: 1.6;
+  }
+
+  span {
+    font-weight: 600;
+    color: #64748b;
+  }
+`;
+
+const MealSummaryCard = styled(InsightCard)`
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(255, 255, 255, 0.95));
 `;
 
 const MealsList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: 0.75rem;
 `;
 
 const MealItem = styled.div`
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.6);
-  padding: 1rem;
-  border-radius: 12px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
 `;
 
 const MealIcon = styled.div`
-  font-size: 2rem;
-  margin-right: 1rem;
+  font-size: 1.5rem;
 `;
 
 const MealInfo = styled.div`
   flex: 1;
-`;
-
-const MealName = styled.div`
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-  color: #2d3436;
-`;
-
-const MealDetails = styled.div`
-  font-size: 0.9rem;
-  opacity: 0.8;
-  color: #636e72;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 `;
 
 const Dashboard: React.FC = () => {
@@ -461,154 +234,167 @@ const Dashboard: React.FC = () => {
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
   const { activities } = useSelector((state: RootState) => state.activities);
 
-  // Calculate today's totals
   const todaysCalories = todaysMeals.reduce((total: number, meal: any) => total + meal.calories, 0);
   const todaysProtein = todaysMeals.reduce((total: number, meal: any) => total + meal.macros.protein, 0);
-  
-  // Calculate today's workout totals from activities
+  const todaysCarbs = todaysMeals.reduce((total: number, meal: any) => total + meal.macros.carbs, 0);
+  const todaysFats = todaysMeals.reduce((total: number, meal: any) => total + meal.macros.fats, 0);
   const todaysWorkouts = activities.filter(
     (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
   const totalCaloriesBurned = todaysWorkouts.reduce((total: number, workout: any) => total + workout.caloriesBurned, 0);
-  const dailyGoal = currentUser?.dailyCalorieGoal;
-  const caloriesRemaining = dailyGoal
-    ? Math.max(dailyGoal - (todaysCalories - totalCaloriesBurned), 0)
-    : null;
+  const totalWorkoutDuration = todaysWorkouts.reduce((total: number, workout: any) => total + workout.duration, 0);
+  const dailyGoal = currentUser?.dailyCalorieGoal || 2000;
+  const netCalories = Math.max(todaysCalories - totalCaloriesBurned, 0);
+  const caloriesRemaining = Math.max(dailyGoal - netCalories, 0);
+  const progress = Math.min((netCalories / dailyGoal) * 100, 100);
 
-  // Fitness quotes array
+  const macroTotal = todaysProtein + todaysCarbs + todaysFats;
+  const macroSplit = {
+    protein: macroTotal ? Math.round((todaysProtein / macroTotal) * 100) : 0,
+    carbs: macroTotal ? Math.round((todaysCarbs / macroTotal) * 100) : 0,
+    fats: macroTotal ? Math.round((todaysFats / macroTotal) * 100) : 0,
+  };
+
   const fitnessQuotes = [
     {
       text: "Health is not about the weight you lose, but about the life you gain.",
-      author: "Dr. Josh Axe"
+      author: "Dr. Josh Axe",
     },
     {
       text: "Take care of your body. It's the only place you have to live.",
-      author: "Jim Rohn"
+      author: "Jim Rohn",
     },
     {
       text: "A healthy outside starts from the inside.",
-      author: "Robert Urich"
+      author: "Robert Urich",
     },
     {
       text: "Fitness is not about being better than someone else. It's about being better than you used to be.",
-      author: "Khloe Kardashian"
+      author: "Khloe Kardashian",
     },
-    {
-      text: "The groundwork for all happiness is good health.",
-      author: "Leigh Hunt"
-    },
-    {
-      text: "Your body can do it. It's time to convince your mind.",
-      author: "Anonymous"
-    }
   ];
 
-  // Get a random quote (changes daily)
-  const today = new Date().getDate();
-  const todaysQuote = fitnessQuotes[today % fitnessQuotes.length];
+  const todaysQuote = fitnessQuotes[new Date().getDate() % fitnessQuotes.length];
+  const circumference = 2 * Math.PI * 54;
+  const ringOffset = circumference - (progress / 100) * circumference;
 
   return (
-    <Container>
+    <Page>
+      <Hero>
+        <HeroContent>
+          <HeroText>
+            <h1>Good to see you{currentUser?.name ? `, ${currentUser.name}` : ''} 👋</h1>
+            <p>Track calories, macros, and workouts in one modern dashboard built for your momentum.</p>
+            <HeroActions>
+              <HeroButton to="/food">🍛 Log a meal</HeroButton>
+              <HeroButton to="/activity" className="outline">🏃 Log workout</HeroButton>
+            </HeroActions>
+          </HeroText>
+          <RingWrapper>
+            <svg width="140" height="140">
+              <circle
+                cx="70"
+                cy="70"
+                r="54"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="12"
+                fill="none"
+              />
+              <circle
+                cx="70"
+                cy="70"
+                r="54"
+                stroke="#fbbf24"
+                strokeWidth="12"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={ringOffset}
+                transform="rotate(-90 70 70)"
+              />
+            </svg>
+            <RingValue>
+              <div style={{ fontSize: '1.6rem' }}>{Math.round(progress)}%</div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>of goal</div>
+            </RingValue>
+          </RingWrapper>
+        </HeroContent>
+      </Hero>
+
       <StatsGrid>
         <StatCard>
-          <StatValue>{dailyGoal ? dailyGoal : '--'}</StatValue>
-          <StatLabel>Daily Calorie Goal</StatLabel>
+          <span>Daily Goal</span>
+          <h3>{dailyGoal}</h3>
+          <p>Target calories</p>
         </StatCard>
         <StatCard>
-          <StatValue>{todaysCalories || '--'}</StatValue>
-          <StatLabel>Calories Consumed</StatLabel>
+          <span>Net Calories</span>
+          <h3>{netCalories}</h3>
+          <p>After workouts</p>
         </StatCard>
         <StatCard>
-          <StatValue>{totalCaloriesBurned || '--'}</StatValue>
-          <StatLabel>Calories Burned</StatLabel>
+          <span>Remaining</span>
+          <h3>{caloriesRemaining}</h3>
+          <p>Calories left today</p>
         </StatCard>
         <StatCard>
-          <StatValue>{caloriesRemaining !== null ? caloriesRemaining : '--'}</StatValue>
-          <StatLabel>Calories Remaining</StatLabel>
+          <span>Active Minutes</span>
+          <h3>{totalWorkoutDuration}</h3>
+          <p>Workout time</p>
         </StatCard>
       </StatsGrid>
-      <WelcomeMessage>
-        <FitnessEmojis>💪🏃‍♂️🥗</FitnessEmojis>
-        <h1>🙏 नमस्ते! Start Your Wellness Journey</h1>
-        <p>🇮🇳 India's most comprehensive nutrition and fitness tracker with 1000+ Indian foods</p>
-        
-        <FitnessQuote>
-          <QuoteText>{todaysQuote.text}</QuoteText>
-          <QuoteAuthor>{todaysQuote.author}</QuoteAuthor>
-        </FitnessQuote>
 
-        <HeroStats>
-          <HeroStatCard>
-            <HeroStatValue>{todaysCalories || '--'}</HeroStatValue>
-            <HeroStatLabel>Calories Logged</HeroStatLabel>
-          </HeroStatCard>
-          <HeroStatCard>
-            <HeroStatValue>{totalCaloriesBurned || '--'}</HeroStatValue>
-            <HeroStatLabel>Calories Burned</HeroStatLabel>
-          </HeroStatCard>
-          <HeroStatCard>
-            <HeroStatValue>{todaysProtein > 0 ? todaysProtein.toFixed(0) + 'g' : '--'}</HeroStatValue>
-            <HeroStatLabel>Protein Intake</HeroStatLabel>
-          </HeroStatCard>
-        </HeroStats>
-      </WelcomeMessage>
+      <InsightGrid>
+        <InsightCard>
+          <h3>Macro balance</h3>
+          <div>
+            <p>Protein {macroSplit.protein}%</p>
+            <MacroBar $color="#6366f1" $width={macroSplit.protein} />
+          </div>
+          <div>
+            <p>Carbs {macroSplit.carbs}%</p>
+            <MacroBar $color="#22c55e" $width={macroSplit.carbs} />
+          </div>
+          <div>
+            <p>Fats {macroSplit.fats}%</p>
+            <MacroBar $color="#f97316" $width={macroSplit.fats} />
+          </div>
+          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+            {todaysProtein.toFixed(1)}g protein • {todaysCarbs.toFixed(1)}g carbs • {todaysFats.toFixed(1)}g fats
+          </p>
+        </InsightCard>
 
-      {todaysMeals.length === 0 ? (
-        <MotivationalSection>
-          <MotivationalCard>
-            <h3>🎆 Your Wellness Journey Starts Here!</h3>
-            <p>🌱 "A healthy outside starts from the inside" - Begin tracking your nutrition today and transform your life, one meal at a time!</p>
-            
-            <MotivationalStats>
-              <div>
-                <strong>🍛 1000+</strong>
-                <span>Indian Foods</span>
-              </div>
-              <div>
-                <strong>📊 Complete</strong>
-                <span>Nutrition Data</span>
-              </div>
-              <div>
-                <strong>🇮🇳 4 Regional</strong>
-                <span>Cuisines</span>
-              </div>
-            </MotivationalStats>
-            
-            <CallToAction>
-              🌟 <strong>Take the first step!</strong> 🍛 Log your breakfast, lunch, or dinner to discover detailed nutrition for Dal, Roti, Rice, Sabzi, and thousands more authentic Indian dishes!
-            </CallToAction>
-            
-            <FoodShowcase>
-              <FoodIcon>🍛<span>Dal</span></FoodIcon>
-              <FoodIcon>🥘<span>Roti</span></FoodIcon>
-              <FoodIcon>🍚<span>Rice</span></FoodIcon>
-              <FoodIcon>🥗<span>Sabzi</span></FoodIcon>
-              <FoodIcon>🥙<span>Paneer</span></FoodIcon>
-            </FoodShowcase>
-          </MotivationalCard>
-        </MotivationalSection>
-      ) : (
+        <QuoteCard>
+          <h3>Daily focus</h3>
+          <p>“{todaysQuote.text}”</p>
+          <span>— {todaysQuote.author}</span>
+        </QuoteCard>
+
         <MealSummaryCard>
-          <h3>🍽️ Today's Meal Summary</h3>
-          <MealsList>
-            {todaysMeals.map((meal: any, index: number) => (
-              <MealItem key={meal.id}>
-                <MealIcon>
-                  {meal.mealType === 'breakfast' && '🍳'}
-                  {meal.mealType === 'lunch' && '🍛'}
-                  {meal.mealType === 'dinner' && '🍝'}
-                  {meal.mealType === 'snack' && '🍪'}
-                </MealIcon>
-                <MealInfo>
-                  <MealName>{meal.foodName}</MealName>
-                  <MealDetails>{meal.calories} cal • {meal.macros.protein.toFixed(1)}g protein</MealDetails>
-                </MealInfo>
-              </MealItem>
-            ))}
-          </MealsList>
+          <h3>Today’s meals</h3>
+          {todaysMeals.length === 0 ? (
+            <p>Start by logging breakfast or a snack to unlock insights.</p>
+          ) : (
+            <MealsList>
+              {todaysMeals.slice(0, 4).map((meal: any) => (
+                <MealItem key={meal.id}>
+                  <MealIcon>
+                    {meal.mealType === 'breakfast' && '🍳'}
+                    {meal.mealType === 'lunch' && '🍛'}
+                    {meal.mealType === 'dinner' && '🍝'}
+                    {meal.mealType === 'snack' && '🍪'}
+                  </MealIcon>
+                  <MealInfo>
+                    <strong>{meal.foodName}</strong>
+                    <span>{meal.calories} cal • {meal.macros.protein.toFixed(1)}g protein</span>
+                  </MealInfo>
+                </MealItem>
+              ))}
+            </MealsList>
+          )}
         </MealSummaryCard>
-      )}
-    </Container>
+      </InsightGrid>
+    </Page>
   );
 };
 
