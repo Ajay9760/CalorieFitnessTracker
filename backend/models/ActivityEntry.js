@@ -64,6 +64,28 @@ module.exports = (sequelize) => {
       allowNull: true,
       defaultValue: [],
       comment: 'Array of exercise objects with name, duration, calories',
+      get() {
+        const rawValue = this.getDataValue('exercises');
+        if (!rawValue) {
+          return [];
+        }
+        if (Array.isArray(rawValue)) {
+          return rawValue;
+        }
+        try {
+          const parsed = JSON.parse(rawValue);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      },
+      set(value) {
+        if (!value) {
+          this.setDataValue('exercises', []);
+        } else {
+          this.setDataValue('exercises', value);
+        }
+      },
     },
     heartRate: {
       type: DataTypes.INTEGER,

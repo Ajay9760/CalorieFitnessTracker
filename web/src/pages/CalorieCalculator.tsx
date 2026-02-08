@@ -821,7 +821,7 @@ const CalorieCalculator: React.FC = () => {
       </ContentGrid>
       </main>
 
-      <aside role="complementary" aria-labelledby="disclaimer-title">
+      <aside aria-labelledby="disclaimer-title">
         <DisclaimerSection>
           <DisclaimerIcon aria-hidden="true">⚠️</DisclaimerIcon>
           <DisclaimerTitle id="disclaimer-title">Important Disclaimer</DisclaimerTitle>

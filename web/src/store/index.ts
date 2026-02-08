@@ -21,6 +21,30 @@ const loadState = () => {
     if (parsedState.user?.lastLoginAt) {
       parsedState.user.lastLoginAt = new Date(parsedState.user.lastLoginAt);
     }
+    if (parsedState.meals?.meals) {
+      parsedState.meals.meals = parsedState.meals.meals.map((meal: any) => ({
+        ...meal,
+        timestamp: new Date(meal.timestamp),
+      }));
+    }
+    if (parsedState.meals?.todaysMeals) {
+      parsedState.meals.todaysMeals = parsedState.meals.todaysMeals.map((meal: any) => ({
+        ...meal,
+        timestamp: new Date(meal.timestamp),
+      }));
+    }
+    if (parsedState.activities?.activities) {
+      parsedState.activities.activities = parsedState.activities.activities.map((activity: any) => ({
+        ...activity,
+        timestamp: new Date(activity.timestamp),
+      }));
+    }
+    if (parsedState.activities?.todaysActivity?.timestamp) {
+      parsedState.activities.todaysActivity = {
+        ...parsedState.activities.todaysActivity,
+        timestamp: new Date(parsedState.activities.todaysActivity.timestamp),
+      };
+    }
     return parsedState;
   } catch (err) {
     return undefined;
@@ -59,7 +83,9 @@ export const store = configureStore({
 // Save state to localStorage whenever it changes
 store.subscribe(() => {
   saveState({
-    user: store.getState().user, // Only persist user state for now
+    user: store.getState().user,
+    meals: store.getState().meals,
+    activities: store.getState().activities,
   });
 });
 

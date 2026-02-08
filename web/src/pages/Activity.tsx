@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../store';
 import { addActivity } from '../store/slices/activitySlice';
-import { WORKOUT_DATABASE, getWorkoutsByCategory, getWorkoutById, searchWorkouts } from '../data/workoutDatabase';
+import { WORKOUT_DATABASE, searchWorkouts } from '../data/workoutDatabase';
 import { WorkoutExercise, WorkoutEntry, WorkoutCategory } from '../types';
 
 const Container = styled.div`
@@ -403,6 +403,7 @@ interface WorkoutFormData {
 const Activity: React.FC = () => {
   const dispatch = useDispatch();
   const { activities } = useSelector((state: RootState) => state.activities);
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const [activeTab, setActiveTab] = useState<'browse' | 'today'>('browse');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<WorkoutCategory | 'all'>('all');
@@ -477,10 +478,27 @@ const Activity: React.FC = () => {
     }));
   };
 
+  const intensityMultipliers = {
+    low: 0.8,
+    moderate: 1,
+    high: 1.15,
+    extreme: 1.3,
+  };
+
+  const weightFactor = currentUser?.weight ? currentUser.weight / 70 : 1;
+  const estimatedCalories = selectedWorkout
+    ? Math.round(
+        selectedWorkout.caloriesPerMinute *
+          formData.duration *
+          intensityMultipliers[formData.intensity] *
+          weightFactor
+      )
+    : 0;
+
   const handleSubmit = () => {
     if (!selectedWorkout) return;
     
-    const caloriesBurned = Math.round(selectedWorkout.caloriesPerMinute * formData.duration);
+    const caloriesBurned = estimatedCalories;
     
     const workoutEntry: WorkoutEntry = {
       id: Date.now().toString(),
@@ -503,6 +521,8 @@ const Activity: React.FC = () => {
     setShowModal(false);
     setSelectedWorkout(null);
   };
+
+  const clampMin = (value: number, min: number) => (Number.isNaN(value) ? min : Math.max(value, min));
 
   return (
     <Container>
@@ -604,11 +624,11 @@ const Activity: React.FC = () => {
         </TabContent>
       </TabSection>
 
-      <Modal $show={showModal}>
+      <Modal $show={showModal} role="dialog" aria-modal="true" aria-labelledby="workout-modal-title">
         <ModalContent>
           <ModalHeader>
-            <h2>Log Workout: {selectedWorkout?.name}</h2>
-            <CloseButton onClick={() => setShowModal(false)}>×</CloseButton>
+            <h2 id="workout-modal-title">Log Workout: {selectedWorkout?.name}</h2>
+            <CloseButton onClick={() => setShowModal(false)} aria-label="Close">×</CloseButton>
           </ModalHeader>
           
           {selectedWorkout && (
@@ -619,7 +639,7 @@ const Activity: React.FC = () => {
                   type="number"
                   min="1"
                   value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({...prev, duration: parseInt(e.target.value) || 0}))}
+                  onChange={(e) => setFormData(prev => ({...prev, duration: clampMin(parseInt(e.target.value, 10), 1)}))}
                 />
               </FormGroup>
               
@@ -633,14 +653,14 @@ const Activity: React.FC = () => {
                         placeholder="Reps"
                         min="1"
                         value={rep}
-                        onChange={(e) => updateSet(index, 'reps', parseInt(e.target.value) || 0)}
+                        onChange={(e) => updateSet(index, 'reps', clampMin(parseInt(e.target.value, 10), 1))}
                       />
                       <input
                         type="number"
                         placeholder="Weight (kg)"
                         min="0"
                         value={formData.weight[index]}
-                        onChange={(e) => updateSet(index, 'weight', parseInt(e.target.value) || 0)}
+                        onChange={(e) => updateSet(index, 'weight', clampMin(parseInt(e.target.value, 10), 0))}
                       />
                     </SetInputs>
                   ))}
@@ -656,7 +676,7 @@ const Activity: React.FC = () => {
                     min="0"
                     step="0.1"
                     value={formData.distance}
-                    onChange={(e) => setFormData(prev => ({...prev, distance: parseFloat(e.target.value) || 0}))}
+                    onChange={(e) => setFormData(prev => ({...prev, distance: clampMin(parseFloat(e.target.value), 0)}))}
                   />
                 </FormGroup>
               )}
@@ -684,7 +704,12 @@ const Activity: React.FC = () => {
               </FormGroup>
               
               <div style={{textAlign: 'center', margin: '1rem 0'}}>
-                <strong>Estimated Calories: {Math.round(selectedWorkout.caloriesPerMinute * formData.duration)}</strong>
+                <strong>Estimated Calories: {estimatedCalories}</strong>
+                {currentUser?.weight && (
+                  <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    Based on {currentUser.weight}kg and {formData.intensity} intensity
+                  </div>
+                )}
               </div>
               
               <SubmitButton onClick={handleSubmit}>

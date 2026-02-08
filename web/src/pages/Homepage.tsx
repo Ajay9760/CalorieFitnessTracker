@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Homepage.css';
+import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
 
 const Homepage: React.FC = () => {

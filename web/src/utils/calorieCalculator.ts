@@ -115,16 +115,18 @@ export function calculateBMR(weight: number, height: number, age: number, gender
  * Calculate Total Daily Energy Expenditure (TDEE)
  * BMR * Activity Level Multiplier
  */
-export function calculateTDEE(bmr: number, activityLevel: User['activityLevel']): number {
-  const multiplier = ACTIVITY_MULTIPLIERS[activityLevel];
+export function calculateTDEE(bmr: number, activityLevel?: User['activityLevel'] | null): number {
+  const fallbackLevel: NonNullable<User['activityLevel']> = 'moderately_active';
+  const multiplier = ACTIVITY_MULTIPLIERS[activityLevel || fallbackLevel];
   return Math.round(bmr * multiplier);
 }
 
 /**
  * Calculate target calories based on fitness goal
  */
-export function calculateTargetCalories(tdee: number, goal: FitnessGoal): number {
-  const preset = GOAL_PRESETS.find(p => p.goal === goal);
+export function calculateTargetCalories(tdee: number, goal?: FitnessGoal | null): number {
+  const resolvedGoal = goal || 'maintain_weight';
+  const preset = GOAL_PRESETS.find(p => p.goal === resolvedGoal);
   if (!preset) return tdee;
   
   const adjustment = tdee * preset.calorieAdjustment;
@@ -134,8 +136,9 @@ export function calculateTargetCalories(tdee: number, goal: FitnessGoal): number
 /**
  * Calculate macro targets in grams based on total calories and goal
  */
-export function calculateMacroTargets(targetCalories: number, goal: FitnessGoal): MacroTargets {
-  const preset = GOAL_PRESETS.find(p => p.goal === goal);
+export function calculateMacroTargets(targetCalories: number, goal?: FitnessGoal | null): MacroTargets {
+  const resolvedGoal = goal || 'maintain_weight';
+  const preset = GOAL_PRESETS.find(p => p.goal === resolvedGoal);
   if (!preset) {
     // Default balanced macro split
     return calculateMacroTargets(targetCalories, 'maintain_weight');
@@ -174,10 +177,17 @@ export function calculateMacroTargets(targetCalories: number, goal: FitnessGoal)
  * Complete calorie and macro calculation for a user
  */
 export function calculateUserCaloriesAndMacros(user: User): CalorieCalculation {
-  const bmr = calculateBMR(user.weight, user.height, user.age, user.gender);
-  const tdee = calculateTDEE(bmr, user.activityLevel);
-  const targetCalories = calculateTargetCalories(tdee, user.fitnessGoal);
-  const macros = calculateMacroTargets(targetCalories, user.fitnessGoal);
+  const weight = user.weight ?? 70;
+  const height = user.height ?? 170;
+  const age = user.age ?? 30;
+  const gender = user.gender ?? 'other';
+  const activityLevel = user.activityLevel ?? 'moderately_active';
+  const fitnessGoal = user.fitnessGoal ?? 'maintain_weight';
+
+  const bmr = calculateBMR(weight, height, age, gender);
+  const tdee = calculateTDEE(bmr, activityLevel);
+  const targetCalories = calculateTargetCalories(tdee, fitnessGoal);
+  const macros = calculateMacroTargets(targetCalories, fitnessGoal);
   
   return {
     bmr,
@@ -211,7 +221,7 @@ export function getRecommendedProteinIntake(goal: FitnessGoal): { min: number; m
 /**
  * Calculate water intake recommendation based on body weight and activity
  */
-export function calculateWaterIntake(weight: number, activityLevel: User['activityLevel']): number {
+export function calculateWaterIntake(weight: number, activityLevel?: User['activityLevel'] | null): number {
   // Base: 35ml per kg body weight
   let waterML = weight * 35;
   
@@ -224,7 +234,8 @@ export function calculateWaterIntake(weight: number, activityLevel: User['activi
     extra_active: 1000
   };
   
-  waterML += activityAdjustments[activityLevel];
+  const resolvedLevel = activityLevel || 'moderately_active';
+  waterML += activityAdjustments[resolvedLevel];
   
   return Math.round(waterML);
 }

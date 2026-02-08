@@ -10,16 +10,34 @@ const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Token management
-let authToken: string | null = localStorage.getItem('accessToken');
+const getCookieValue = (name: string): string | null => {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+  const matches = document.cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith(`${name}=`));
+  return matches ? decodeURIComponent(matches.split('=')[1]) : null;
+};
 
-// Request interceptor to add auth token
+const shouldAttachCsrf = (method?: string) => {
+  if (!method) {
+    return false;
+  }
+  return !['get', 'head', 'options'].includes(method.toLowerCase());
+};
+
+// Request interceptor to add CSRF token
 api.interceptors.request.use(
   (config) => {
-    if (authToken) {
-      config.headers.Authorization = `Bearer ${authToken}`;
+    if (shouldAttachCsrf(config.method)) {
+      const csrfToken = getCookieValue('csrfToken');
+      if (csrfToken) {
+        config.headers['X-CSRF-Token'] = csrfToken;
+      }
     }
     return config;
   },
@@ -28,48 +46,47 @@ api.interceptors.request.use(
   }
 );
 
+let refreshPromise: Promise<AxiosResponse> | null = null;
+
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      authToken = null;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as (typeof error.config & { _retry?: boolean });
+    const requestUrl = originalRequest?.url || '';
+    const isAuthRoute = requestUrl.includes('/api/auth/');
+
+    if (error.response?.status === 401 && !isAuthRoute && !originalRequest?._retry) {
+      originalRequest._retry = true;
+      try {
+        if (!refreshPromise) {
+          refreshPromise = authApi.refreshToken();
+        }
+        await refreshPromise;
+        refreshPromise = null;
+        return api(originalRequest);
+      } catch (refreshError) {
+        refreshPromise = null;
+        window.location.href = '/auth';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    if (error.response?.status === 401 && isAuthRoute) {
       window.location.href = '/auth';
     }
+
     return Promise.reject(error);
   }
 );
-
-// Helper function to set auth token
-export const setAuthToken = (token: string | null) => {
-  authToken = token;
-  if (token) {
-    localStorage.setItem('accessToken', token);
-  } else {
-    localStorage.removeItem('accessToken');
-  }
-};
 
 // Types for API responses
 interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
-}
-
-interface PaginatedResponse<T> {
-  items: T[];
-  pagination: {
-    total: number;
-    limit: number;
-    offset: number;
-    hasMore: boolean;
-  };
 }
 
 // Authentication API
@@ -80,16 +97,19 @@ export const authApi = {
     username: string;
     name: string;
   }) =>
-    api.post<ApiResponse<{ user: any; accessToken: string; refreshToken: string }>>('/api/auth/register', userData),
+    api.post<ApiResponse<{ user: any }>>('/api/auth/register', userData),
 
   login: (credentials: { email: string; password: string }) =>
-    api.post<ApiResponse<{ user: any; accessToken: string; refreshToken: string }>>('/api/auth/login', credentials),
+    api.post<ApiResponse<{ user: any }>>('/api/auth/login', credentials),
 
   logout: () =>
     api.post<ApiResponse<null>>('/api/auth/logout'),
 
-  refreshToken: (refreshToken: string) =>
-    api.post<ApiResponse<{ accessToken: string; refreshToken: string }>>('/api/auth/refresh', { refreshToken }),
+  refreshToken: () =>
+    api.post<ApiResponse<Record<string, never>>>('/api/auth/refresh'),
+
+  csrf: () =>
+    api.get<ApiResponse<null>>('/api/auth/csrf'),
 };
 
 // User API
