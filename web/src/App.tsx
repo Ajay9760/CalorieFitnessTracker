@@ -1,9 +1,10 @@
-import React, { Suspense, lazy } from 'react';
-import { Provider, useSelector } from 'react-redux';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { store } from './store';
+import { AppDispatch, store } from './store';
 import Navbar from './components/Navbar';
-import { selectIsAuthenticated } from './store/slices/userSlice';
+import { checkAuthStatus, selectIsAuthenticated } from './store/slices/userSlice';
+import { authApi } from './services/api';
 import './App.css';
 
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -34,7 +35,13 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => (
 );
 
 function AppContent() {
+  const dispatch = useDispatch<AppDispatch>();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  useEffect(() => {
+    authApi.csrf().catch(() => undefined);
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
 
   return (
     <Router basename="/CalorieFitnessTracker">

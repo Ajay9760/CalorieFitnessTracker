@@ -1,8 +1,9 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { RootState } from '../store';
+import { AppDispatch, RootState } from '../store';
+import { updateUserProfile } from '../store/slices/userSlice';
 
 const Page = styled.div`
   max-width: 1200px;
@@ -229,10 +230,257 @@ const MealInfo = styled.div`
   gap: 0.2rem;
 `;
 
+const CompletionCard = styled.section`
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const CompletionHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+`;
+
+const CompletionForm = styled.form`
+  display: grid;
+  gap: 1rem;
+`;
+
+const CompletionRow = styled.div`
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+`;
+
+const CompletionField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: #1f2937;
+`;
+
+const CompletionInput = styled.input`
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  background: #f8fafc;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+`;
+
+const CompletionSelect = styled.select`
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  background: #f8fafc;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+`;
+
+const CompletionError = styled.span`
+  font-size: 0.8rem;
+  color: #ef4444;
+`;
+
+const CompletionActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const CompletionButton = styled.button`
+  padding: 0.8rem 1.6rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+`;
+
+type ProfileFieldKey = 'age' | 'gender' | 'height' | 'weight' | 'activityLevel' | 'dietType' | 'region';
+
+const PROFILE_FIELDS: Array<{
+  key: ProfileFieldKey;
+  label: string;
+  type: 'number' | 'select';
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  options?: Array<{ value: string; label: string }>;
+}> = [
+  { key: 'age', label: 'Age', type: 'number', min: 13, max: 120, placeholder: 'Age' },
+  {
+    key: 'gender',
+    label: 'Gender',
+    type: 'select',
+    options: [
+      { value: 'male', label: 'Male' },
+      { value: 'female', label: 'Female' },
+      { value: 'other', label: 'Other' },
+    ],
+  },
+  { key: 'height', label: 'Height (cm)', type: 'number', min: 100, max: 250, placeholder: 'Height in cm' },
+  { key: 'weight', label: 'Weight (kg)', type: 'number', min: 30, max: 300, placeholder: 'Weight in kg' },
+  {
+    key: 'activityLevel',
+    label: 'Activity Level',
+    type: 'select',
+    options: [
+      { value: 'sedentary', label: 'Sedentary (Little or no exercise)' },
+      { value: 'lightly_active', label: 'Lightly Active (1-3 days/week)' },
+      { value: 'moderately_active', label: 'Moderately Active (3-5 days/week)' },
+      { value: 'very_active', label: 'Very Active (6-7 days/week)' },
+      { value: 'extra_active', label: 'Extra Active (Physical job or intense training)' },
+    ],
+  },
+  {
+    key: 'dietType',
+    label: 'Diet Preference',
+    type: 'select',
+    options: [
+      { value: 'vegetarian', label: 'Vegetarian' },
+      { value: 'vegan', label: 'Vegan' },
+      { value: 'non_veg', label: 'Non-Vegetarian' },
+      { value: 'keto', label: 'Keto' },
+      { value: 'high_protein', label: 'High Protein' },
+    ],
+  },
+  {
+    key: 'region',
+    label: 'Region',
+    type: 'select',
+    options: [
+      { value: 'north_indian', label: 'North Indian' },
+      { value: 'south_indian', label: 'South Indian' },
+      { value: 'east_indian', label: 'East Indian' },
+      { value: 'west_indian', label: 'West Indian' },
+      { value: 'all', label: 'All Regions' },
+    ],
+  },
+];
+
 const Dashboard: React.FC = () => {
-  const { currentUser } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentUser, loading: userLoading } = useSelector((state: RootState) => state.user);
   const { todaysMeals } = useSelector((state: RootState) => state.meals);
   const { activities } = useSelector((state: RootState) => state.activities);
+  const [profileForm, setProfileForm] = useState<Record<ProfileFieldKey, string>>({
+    age: '',
+    gender: '',
+    height: '',
+    weight: '',
+    activityLevel: '',
+    dietType: '',
+    region: '',
+  });
+  const [profileErrors, setProfileErrors] = useState<Partial<Record<ProfileFieldKey, string>>>({});
+
+  useEffect(() => {
+    if (!currentUser) {
+      return;
+    }
+    setProfileForm({
+      age: currentUser.age ? String(currentUser.age) : '',
+      gender: currentUser.gender || '',
+      height: currentUser.height ? String(currentUser.height) : '',
+      weight: currentUser.weight ? String(currentUser.weight) : '',
+      activityLevel: currentUser.activityLevel || '',
+      dietType: currentUser.dietType || '',
+      region: currentUser.region || '',
+    });
+  }, [currentUser]);
+
+  const missingFields = useMemo(() => {
+    if (!currentUser) {
+      return [];
+    }
+    return PROFILE_FIELDS.filter((field) => {
+      const value = currentUser[field.key as keyof typeof currentUser];
+      return value === null || value === undefined || value === '';
+    });
+  }, [currentUser]);
+
+  const handleProfileChange = (key: ProfileFieldKey, value: string) => {
+    setProfileForm((prev) => ({ ...prev, [key]: value }));
+    if (profileErrors[key]) {
+      setProfileErrors((prev) => ({ ...prev, [key]: undefined }));
+    }
+  };
+
+  const handleProfileSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (missingFields.length === 0) {
+      return;
+    }
+
+    const nextErrors: Partial<Record<ProfileFieldKey, string>> = {};
+    missingFields.forEach((field) => {
+      if (!profileForm[field.key]) {
+        nextErrors[field.key] = `${field.label} is required`;
+      }
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      setProfileErrors(nextErrors);
+      return;
+    }
+
+    const updatePayload: Record<string, string | number> = {};
+    missingFields.forEach((field) => {
+      const value = profileForm[field.key];
+      if (!value) {
+        return;
+      }
+      updatePayload[field.key] = field.type === 'number' ? Number(value) : value;
+    });
+
+    if (Object.keys(updatePayload).length > 0) {
+      await dispatch(updateUserProfile(updatePayload));
+    }
+  };
 
   const todaysCalories = todaysMeals.reduce((total: number, meal: any) => total + meal.calories, 0);
   const todaysProtein = todaysMeals.reduce((total: number, meal: any) => total + meal.macros.protein, 0);
@@ -320,6 +568,54 @@ const Dashboard: React.FC = () => {
           </RingWrapper>
         </HeroContent>
       </Hero>
+
+      {missingFields.length > 0 && (
+        <CompletionCard>
+          <CompletionHeader>
+            <h2>Finish setting up your profile</h2>
+            <p>Tell us a bit more so we can personalize your daily goals.</p>
+          </CompletionHeader>
+          <CompletionForm onSubmit={handleProfileSubmit}>
+            <CompletionRow>
+              {missingFields.map((field) => (
+                <CompletionField key={field.key}>
+                  {field.label}
+                  {field.type === 'select' ? (
+                    <CompletionSelect
+                      value={profileForm[field.key]}
+                      onChange={(event) => handleProfileChange(field.key, event.target.value)}
+                    >
+                      <option value="">Select {field.label}</option>
+                      {field.options?.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </CompletionSelect>
+                  ) : (
+                    <CompletionInput
+                      type="number"
+                      min={field.min}
+                      max={field.max}
+                      placeholder={field.placeholder}
+                      value={profileForm[field.key]}
+                      onChange={(event) => handleProfileChange(field.key, event.target.value)}
+                    />
+                  )}
+                  {profileErrors[field.key] && (
+                    <CompletionError>{profileErrors[field.key]}</CompletionError>
+                  )}
+                </CompletionField>
+              ))}
+            </CompletionRow>
+            <CompletionActions>
+              <CompletionButton type="submit" disabled={userLoading}>
+                {userLoading ? 'Saving...' : 'Save profile'}
+              </CompletionButton>
+            </CompletionActions>
+          </CompletionForm>
+        </CompletionCard>
+      )}
 
       <StatsGrid>
         <StatCard>

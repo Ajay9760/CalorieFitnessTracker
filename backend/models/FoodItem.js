@@ -30,6 +30,21 @@ module.exports = (sequelize) => {
       type: DataTypes.JSON, // Array of regions
       allowNull: true,
       defaultValue: ['all_india'],
+      get() {
+        const rawValue = this.getDataValue('region');
+        if (!rawValue) {
+          return [];
+        }
+        if (Array.isArray(rawValue)) {
+          return rawValue;
+        }
+        try {
+          const parsed = JSON.parse(rawValue);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      },
     },
     calories: {
       type: DataTypes.FLOAT,
@@ -95,6 +110,21 @@ module.exports = (sequelize) => {
       defaultValue: [
         { unit: 'grams', grams: 100, description: '100g' }
       ],
+      get() {
+        const rawValue = this.getDataValue('servingSizes');
+        if (!rawValue) {
+          return [];
+        }
+        if (Array.isArray(rawValue)) {
+          return rawValue;
+        }
+        try {
+          const parsed = JSON.parse(rawValue);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      },
     },
     isCommonDish: {
       type: DataTypes.BOOLEAN,
@@ -104,6 +134,21 @@ module.exports = (sequelize) => {
       type: DataTypes.JSON,
       allowNull: true,
       defaultValue: [],
+      get() {
+        const rawValue = this.getDataValue('tags');
+        if (!rawValue) {
+          return [];
+        }
+        if (Array.isArray(rawValue)) {
+          return rawValue;
+        }
+        try {
+          const parsed = JSON.parse(rawValue);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      },
     },
     imageUrl: {
       type: DataTypes.STRING,

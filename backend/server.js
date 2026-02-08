@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
+const { ensureCsrfToken, csrfProtection } = require('./middleware/csrf');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -45,8 +47,12 @@ app.use(cors({
   },
   credentials: true,
 })); // Enable CORS
+app.use(cookieParser());
+app.use(ensureCsrfToken);
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+app.use('/api', csrfProtection);
 
 // Debug middleware to log all requests
 if (process.env.DEBUG_REQUESTS === 'true') {

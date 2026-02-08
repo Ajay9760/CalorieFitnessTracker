@@ -140,7 +140,7 @@ const Profile: React.FC = () => {
     );
   }
 
-  const formatActivityLevel = (level: string) => {
+  const formatActivityLevel = (level?: string | null) => {
     const levels: { [key: string]: string } = {
       'sedentary': 'Sedentary',
       'lightly_active': 'Lightly Active',
@@ -148,10 +148,10 @@ const Profile: React.FC = () => {
       'very_active': 'Very Active',
       'extra_active': 'Extra Active'
     };
-    return levels[level] || level;
+    return level ? (levels[level] || level) : 'Not set';
   };
 
-  const formatDietType = (diet: string) => {
+  const formatDietType = (diet?: string | null) => {
     const diets: { [key: string]: string } = {
       'vegetarian': 'Vegetarian',
       'vegan': 'Vegan',
@@ -159,10 +159,10 @@ const Profile: React.FC = () => {
       'keto': 'Ketogenic',
       'high_protein': 'High Protein'
     };
-    return diets[diet] || diet;
+    return diet ? (diets[diet] || diet) : 'Not set';
   };
 
-  const formatRegion = (region: string) => {
+  const formatRegion = (region?: string | null) => {
     const regions: { [key: string]: string } = {
       'north_indian': 'North Indian',
       'south_indian': 'South Indian',
@@ -170,10 +170,10 @@ const Profile: React.FC = () => {
       'west_indian': 'West Indian',
       'all': 'All Regions'
     };
-    return regions[region] || region;
+    return region ? (regions[region] || region) : 'Not set';
   };
 
-  const formatFitnessGoal = (goal: string) => {
+  const formatFitnessGoal = (goal?: string | null) => {
     const goals: { [key: string]: string } = {
       'lose_weight': 'Weight Loss',
       'maintain_weight': 'Weight Maintenance',
@@ -182,7 +182,7 @@ const Profile: React.FC = () => {
       'cut': 'Cutting (Bodybuilding)',
       'lean_bulk': 'Lean Bulk'
     };
-    return goals[goal] || goal;
+    return goal ? (goals[goal] || goal) : 'Not set';
   };
 
   return (
@@ -207,11 +207,15 @@ const Profile: React.FC = () => {
             </InfoItem>
             <InfoItem>
               <InfoLabel>Age</InfoLabel>
-              <InfoValue>{currentUser.age} years</InfoValue>
+              <InfoValue>{currentUser.age ? `${currentUser.age} years` : 'Not set'}</InfoValue>
             </InfoItem>
             <InfoItem>
               <InfoLabel>Gender</InfoLabel>
-              <InfoValue>{currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)}</InfoValue>
+              <InfoValue>
+                {currentUser.gender
+                  ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
+                  : 'Not set'}
+              </InfoValue>
             </InfoItem>
             <InfoItem>
               <InfoLabel>Region</InfoLabel>
@@ -225,11 +229,11 @@ const Profile: React.FC = () => {
           <InfoGrid>
             <InfoItem>
               <InfoLabel>Height</InfoLabel>
-              <InfoValue>{currentUser.height} cm</InfoValue>
+              <InfoValue>{currentUser.height ? `${currentUser.height} cm` : 'Not set'}</InfoValue>
             </InfoItem>
             <InfoItem>
               <InfoLabel>Weight</InfoLabel>
-              <InfoValue>{currentUser.weight} kg</InfoValue>
+              <InfoValue>{currentUser.weight ? `${currentUser.weight} kg` : 'Not set'}</InfoValue>
             </InfoItem>
             <InfoItem>
               <InfoLabel>Activity Level</InfoLabel>
@@ -257,7 +261,11 @@ const Profile: React.FC = () => {
             </InfoItem>
             <InfoItem>
               <InfoLabel>Target Weight</InfoLabel>
-              <InfoValue>{currentUser.targetWeight || currentUser.weight} kg</InfoValue>
+              <InfoValue>
+                {currentUser.targetWeight || currentUser.weight
+                  ? `${currentUser.targetWeight || currentUser.weight} kg`
+                  : 'Not set'}
+              </InfoValue>
             </InfoItem>
             <InfoItem>
               <InfoLabel>Weekly Change Goal</InfoLabel>
@@ -265,21 +273,29 @@ const Profile: React.FC = () => {
             </InfoItem>
             <InfoItem>
               <InfoLabel>BMI</InfoLabel>
-              <InfoValue>{Math.round((currentUser.weight / ((currentUser.height / 100) ** 2)) * 10) / 10}</InfoValue>
+              <InfoValue>
+                {currentUser.weight && currentUser.height
+                  ? Math.round((currentUser.weight / ((currentUser.height / 100) ** 2)) * 10) / 10
+                  : 'N/A'}
+              </InfoValue>
             </InfoItem>
           </InfoGrid>
           
           <StatsGrid>
             <StatItem>
-              <StatNumber>{currentUser.dailyCalorieGoal}</StatNumber>
+              <StatNumber>{currentUser.dailyCalorieGoal ?? 'Not set'}</StatNumber>
               <StatLabel>Daily Calories</StatLabel>
             </StatItem>
             <StatItem>
-              <StatNumber>{currentUser.dailyStepGoal.toLocaleString()}</StatNumber>
+              <StatNumber>
+                {currentUser.dailyStepGoal ? currentUser.dailyStepGoal.toLocaleString() : 'Not set'}
+              </StatNumber>
               <StatLabel>Daily Steps</StatLabel>
             </StatItem>
             <StatItem>
-              <StatNumber>{currentUser.dailyWaterGoal / 1000}L</StatNumber>
+              <StatNumber>
+                {currentUser.dailyWaterGoal ? `${currentUser.dailyWaterGoal / 1000}L` : 'Not set'}
+              </StatNumber>
               <StatLabel>Daily Water</StatLabel>
             </StatItem>
           </StatsGrid>

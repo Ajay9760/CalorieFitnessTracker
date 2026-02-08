@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../../types';
-import { authApi, userApi, setAuthToken, handleApiError } from '../../services/api';
+import { authApi, userApi, handleApiError } from '../../services/api';
 
 interface UserState {
   currentUser: User | null;
@@ -17,13 +17,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await authApi.login(credentials);
-      const { user, accessToken, refreshToken } = response.data.data;
-      
-      // Store tokens
-      setAuthToken(accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      
-      return user;
+      return response.data.data.user;
     } catch (error) {
       return rejectWithValue(handleApiError(error));
     }
@@ -35,13 +29,7 @@ export const registerUser = createAsyncThunk(
   async (userData: any, { rejectWithValue }) => {
     try {
       const response = await authApi.register(userData);
-      const { user, accessToken, refreshToken } = response.data.data;
-      
-      // Store tokens
-      setAuthToken(accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      
-      return user;
+      return response.data.data.user;
     } catch (error) {
       return rejectWithValue(handleApiError(error));
     }
@@ -53,16 +41,8 @@ export const logoutUserAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await authApi.logout();
-      
-      // Clear tokens
-      setAuthToken(null);
-      localStorage.removeItem('refreshToken');
-      
       return null;
     } catch (error) {
-      // Even if logout fails, clear local tokens
-      setAuthToken(null);
-      localStorage.removeItem('refreshToken');
       return null;
     }
   }
@@ -96,19 +76,13 @@ export const updateUserProfile = createAsyncThunk(
 export const checkAuthStatus = createAsyncThunk(
   'user/checkAuth',
   async (_, { rejectWithValue }) => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      return rejectWithValue('No token found');
-    }
-    
     try {
-      setAuthToken(token);
       const response = await userApi.getProfile();
       return response.data.data.user;
-    } catch (error) {
-      // Token is invalid, clear it
-      setAuthToken(null);
-      localStorage.removeItem('refreshToken');
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        return rejectWithValue(null);
+      }
       return rejectWithValue(handleApiError(error));
     }
   }
@@ -156,8 +130,6 @@ const userSlice = createSlice({
       state.error = null;
       state.loginAttempts = 0;
       state.lastLoginAt = null;
-      // Clear localStorage
-      localStorage.removeItem('calorieFitnessState');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

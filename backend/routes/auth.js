@@ -1,8 +1,62 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const { User } = require('../models');
-const { generateAccessToken, generateRefreshToken, authenticateToken } = require('../middleware/auth');
+const crypto = require('crypto');
+const { User, RefreshToken } = require('../models');
+const { generateAccessToken, authenticateToken } = require('../middleware/auth');
+const { createCsrfToken, getCookieOptions } = require('../middleware/csrf');
 const router = express.Router();
+
+const ACCESS_TOKEN_MAX_AGE_MS = 15 * 60 * 1000;
+const REFRESH_TOKEN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+};
+
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
+
+const issueCsrfCookie = (res) => {
+  const token = createCsrfToken();
+  res.cookie('csrfToken', token, getCookieOptions());
+  return token;
+};
+
+const issueAuthCookies = (res, { accessToken, refreshToken, refreshTokenExpiresAt }) => {
+  res.cookie('accessToken', accessToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: ACCESS_TOKEN_MAX_AGE_MS,
+  });
+
+  if (refreshToken) {
+    res.cookie('refreshToken', refreshToken, {
+      ...COOKIE_OPTIONS,
+      expires: refreshTokenExpiresAt,
+    });
+  }
+};
+
+const clearAuthCookies = (res) => {
+  res.clearCookie('accessToken', COOKIE_OPTIONS);
+  res.clearCookie('refreshToken', COOKIE_OPTIONS);
+  res.clearCookie('csrfToken', getCookieOptions());
+};
+
+const createRefreshTokenRecord = async (userId, req) => {
+  const token = crypto.randomBytes(64).toString('hex');
+  const tokenHash = hashToken(token);
+  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_MAX_AGE_MS);
+
+  const record = await RefreshToken.create({
+    userId,
+    tokenHash,
+    issuedAt: new Date(),
+    expiresAt,
+    userAgent: req.headers['user-agent'],
+    ipAddress: req.ip,
+  });
+
+  return { token, expiresAt, record };
+};
 
 // Validation helper
 const validateEmail = (email) => {
@@ -127,18 +181,16 @@ router.post('/register', async (req, res) => {
 
     // Generate tokens
     const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const { token: refreshToken, expiresAt: refreshTokenExpiresAt } = await createRefreshTokenRecord(user.id, req);
 
-    // Save refresh token
-    await user.update({ refreshToken });
+    issueAuthCookies(res, { accessToken, refreshToken, refreshTokenExpiresAt });
+    issueCsrfCookie(res);
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
       data: {
-        user: user.toJSON(),
-        accessToken,
-        refreshToken
+        user: user.toJSON()
       }
     });
   } catch (error) {
@@ -196,21 +248,21 @@ router.post('/login', async (req, res) => {
 
     // Generate tokens
     const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const { token: refreshToken, expiresAt: refreshTokenExpiresAt } = await createRefreshTokenRecord(user.id, req);
 
-    // Update last login and save refresh token
+    // Update last login
     await user.update({ 
-      lastLoginAt: new Date(),
-      refreshToken 
+      lastLoginAt: new Date()
     });
+
+    issueAuthCookies(res, { accessToken, refreshToken, refreshTokenExpiresAt });
+    issueCsrfCookie(res);
 
     res.json({
       success: true,
       message: 'Login successful',
       data: {
-        user: user.toJSON(),
-        accessToken,
-        refreshToken
+        user: user.toJSON()
       }
     });
   } catch (error) {
@@ -226,8 +278,16 @@ router.post('/login', async (req, res) => {
 // POST /api/auth/logout
 router.post('/logout', authenticateToken, async (req, res) => {
   try {
-    // Clear refresh token
-    await req.user.update({ refreshToken: null });
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const tokenHash = hashToken(refreshToken);
+      await RefreshToken.update(
+        { revokedAt: new Date() },
+        { where: { tokenHash, revokedAt: null } }
+      );
+    }
+
+    clearAuthCookies(res);
 
     res.json({
       success: true,
@@ -246,7 +306,7 @@ router.post('/logout', authenticateToken, async (req, res) => {
 // POST /api/auth/refresh
 router.post('/refresh', async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -256,18 +316,31 @@ router.post('/refresh', async (req, res) => {
       });
     }
 
-    // Verify refresh token
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    
-    // Find user with this refresh token
-    const user = await User.findOne({
-      where: {
-        id: decoded.userId,
-        refreshToken
-      }
+    const tokenHash = hashToken(refreshToken);
+    const storedToken = await RefreshToken.findOne({
+      where: { tokenHash },
     });
 
+    if (!storedToken || storedToken.revokedAt) {
+      return res.status(401).json({
+        success: false,
+        error: 'Access Denied',
+        message: 'Invalid refresh token'
+      });
+    }
+
+    if (storedToken.expiresAt <= new Date()) {
+      await storedToken.update({ revokedAt: new Date() });
+      return res.status(401).json({
+        success: false,
+        error: 'Access Denied',
+        message: 'Invalid refresh token'
+      });
+    }
+
+    const user = await User.findByPk(storedToken.userId);
     if (!user) {
+      await storedToken.update({ revokedAt: new Date() });
       return res.status(401).json({
         success: false,
         error: 'Access Denied',
@@ -277,18 +350,24 @@ router.post('/refresh', async (req, res) => {
 
     // Generate new tokens
     const newAccessToken = generateAccessToken(user.id);
-    const newRefreshToken = generateRefreshToken(user.id);
+    const { token: newRefreshToken, expiresAt: refreshTokenExpiresAt, record } = await createRefreshTokenRecord(user.id, req);
 
-    // Update refresh token
-    await user.update({ refreshToken: newRefreshToken });
+    await storedToken.update({
+      revokedAt: new Date(),
+      replacedByTokenId: record.id,
+    });
+
+    issueAuthCookies(res, {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      refreshTokenExpiresAt,
+    });
+    issueCsrfCookie(res);
 
     res.json({
       success: true,
       message: 'Token refreshed successfully',
-      data: {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken
-      }
+      data: {}
     });
   } catch (error) {
     console.error('Token refresh error:', error);
@@ -298,6 +377,15 @@ router.post('/refresh', async (req, res) => {
       message: 'Invalid or expired refresh token'
     });
   }
+});
+
+// GET /api/auth/csrf
+router.get('/csrf', (req, res) => {
+  issueCsrfCookie(res);
+  res.json({
+    success: true,
+    message: 'CSRF token issued'
+  });
 });
 
 module.exports = router;

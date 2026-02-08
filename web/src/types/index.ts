@@ -4,32 +4,32 @@ export interface User {
   email: string;
   username: string;
   name: string;
-  age: number;
-  gender: 'male' | 'female' | 'other';
-  height: number; // in cm
-  weight: number; // in kg
-  activityLevel: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extra_active';
-  dietType: 'vegetarian' | 'vegan' | 'non_veg' | 'keto' | 'high_protein';
-  region: 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all';
+  age?: number | null;
+  gender?: 'male' | 'female' | 'other' | null;
+  height?: number | null; // in cm
+  weight?: number | null; // in kg
+  activityLevel?: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extra_active' | null;
+  dietType?: 'vegetarian' | 'vegan' | 'non_veg' | 'keto' | 'high_protein' | null;
+  region?: 'north_indian' | 'south_indian' | 'east_indian' | 'west_indian' | 'all' | null;
   
   // Goals and Targets
-  fitnessGoal: FitnessGoal;
-  targetWeight?: number; // in kg - for weight loss/gain goals
-  weeklyWeightChangeGoal?: number; // in kg per week (0.25-1kg recommended)
+  fitnessGoal?: FitnessGoal | null;
+  targetWeight?: number | null; // in kg - for weight loss/gain goals
+  weeklyWeightChangeGoal?: number | null; // in kg per week (0.25-1kg recommended)
   
   // Daily Goals (calculated based on fitness goal)
-  dailyCalorieGoal: number;
-  dailyStepGoal: number;
-  dailyWaterGoal: number; // in ml
+  dailyCalorieGoal?: number | null;
+  dailyStepGoal?: number | null;
+  dailyWaterGoal?: number | null; // in ml
   
   // Macro Targets (calculated based on fitness goal)
-  dailyProteinGoal: number; // in grams
-  dailyCarbsGoal: number; // in grams
-  dailyFatsGoal: number; // in grams
+  dailyProteinGoal?: number | null; // in grams
+  dailyCarbsGoal?: number | null; // in grams
+  dailyFatsGoal?: number | null; // in grams
   
   // Body composition goals (optional)
-  bodyFatPercentage?: number;
-  targetBodyFatPercentage?: number;
+  bodyFatPercentage?: number | null;
+  targetBodyFatPercentage?: number | null;
   
   createdAt: Date;
   updatedAt: Date;
