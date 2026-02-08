@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { selectCurrentUser, updateUser } from '../store/slices/userSlice';
+import { selectCurrentUser } from '../store/slices/userSlice';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -124,10 +124,8 @@ const StatLabel = styled.div`
 `;
 
 const Profile: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
-  const [isEditing, setIsEditing] = useState(false);
 
   if (!currentUser) {
     return (

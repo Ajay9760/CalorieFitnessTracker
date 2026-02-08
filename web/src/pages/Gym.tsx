@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../store';
-import { GYM_EXERCISES_DATABASE, EXERCISE_CATEGORIES, WORKOUT_TEMPLATES, GymExercise, BodyPart } from '../data/gymExercises';
+import { EXERCISE_CATEGORIES, GymExercise, BodyPart } from '../data/gymExercises';
 import { addActivity } from '../store/slices/activitySlice';
 
 const Container = styled.div`
@@ -558,7 +557,6 @@ const Gym: React.FC = () => {
   const [isResting, setIsResting] = useState(false);
   const [currentRestTime, setCurrentRestTime] = useState(90);
   const [workoutStarted, setWorkoutStarted] = useState(false);
-  const [startTime, setStartTime] = useState<Date | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Rest timer effect
@@ -604,7 +602,6 @@ const Gym: React.FC = () => {
 
     if (!workoutStarted) {
       setWorkoutStarted(true);
-      setStartTime(new Date());
     }
 
     const completedSets = sets.filter(set => set.completed);

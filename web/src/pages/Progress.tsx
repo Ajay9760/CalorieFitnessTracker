@@ -108,7 +108,6 @@ const Progress: React.FC = () => {
   const todaysWorkouts = activities.filter(
     (activity: any) => new Date(activity.timestamp).toDateString() === new Date().toDateString()
   );
-  const totalCaloriesBurned = todaysWorkouts.reduce((total: number, workout: any) => total + workout.caloriesBurned, 0);
   const totalWorkoutDuration = todaysWorkouts.reduce((total: number, workout: any) => total + workout.duration, 0);
 
   // Generate sample data for the last 7 days
