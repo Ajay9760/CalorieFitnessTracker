@@ -24,11 +24,13 @@ const User = require('./User')(sequelize);
 const FoodItem = require('./FoodItem')(sequelize);
 const MealEntry = require('./MealEntry')(sequelize);
 const ActivityEntry = require('./ActivityEntry')(sequelize);
+const RefreshToken = require('./RefreshToken')(sequelize);
 
 // Define associations
 // User associations
 User.hasMany(MealEntry, { foreignKey: 'userId', as: 'meals' });
 User.hasMany(ActivityEntry, { foreignKey: 'userId', as: 'activities' });
+User.hasMany(RefreshToken, { foreignKey: 'userId', as: 'refreshTokens' });
 
 // MealEntry associations
 MealEntry.belongsTo(User, { foreignKey: 'userId', as: 'user' });
@@ -36,6 +38,7 @@ MealEntry.belongsTo(FoodItem, { foreignKey: 'foodId', as: 'food' });
 
 // ActivityEntry associations
 ActivityEntry.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+RefreshToken.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 // FoodItem associations
 FoodItem.hasMany(MealEntry, { foreignKey: 'foodId', as: 'mealEntries' });
@@ -47,4 +50,5 @@ module.exports = {
   FoodItem,
   MealEntry,
   ActivityEntry,
+  RefreshToken,
 };

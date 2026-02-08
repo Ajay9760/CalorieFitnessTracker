@@ -188,6 +188,60 @@ npm test
 npm test
 ```
 
+## 🚀 Deployment Guide
+
+### 1) Backend (Node/Express API)
+**Required env vars (example):**
+```bash
+JWT_SECRET=your_long_random_secret
+CORS_ORIGIN=https://your-web-domain.com
+PORT=3001
+OPENAI_API_KEY=your_openai_key # optional, enables AI food photo scanning
+OPENAI_VISION_MODEL=gpt-4o-mini # optional override
+```
+
+**Steps:**
+```bash
+cd backend
+npm install
+npm start
+```
+
+**Notes:**
+- The API uses cookie-based auth + CSRF, so the frontend and backend must share a top-level domain (or configure proper CORS/credentials). The server already enables cookies + CORS credentials. 
+- In production you must serve the backend over HTTPS so secure cookies are accepted by browsers.
+- AI photo scanning is optional and only enabled when `OPENAI_API_KEY` is set.
+
+### 2) Web App (React)
+**Local dev:**
+```bash
+cd web
+npm install
+npm start
+```
+
+**Production build:**
+```bash
+cd web
+npm run build
+```
+
+**API URL:**
+Set `REACT_APP_API_URL` to point the web app at your backend:
+```bash
+export REACT_APP_API_URL=https://api.your-domain.com
+```
+
+### 3) GitHub Pages (optional)
+This repo includes `gh-pages` tooling in `web/package.json`. To publish:
+```bash
+cd web
+npm run build
+npm run deploy
+```
+
+Make sure the backend is hosted separately (e.g., Render, Railway, Fly.io) and `REACT_APP_API_URL` points to it.
+
 ## 📊 Features in Development
 
 - [ ] Meal planning and recipes

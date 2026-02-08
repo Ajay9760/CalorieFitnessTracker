@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
+const { ensureCsrfToken, csrfProtection } = require('./middleware/csrf');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -20,6 +22,9 @@ const { sequelize } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
+  .split(',')
+  .map(origin => origin.trim());
 
 // Rate limiting
 const limiter = rateLimit({
@@ -29,21 +34,36 @@ const limiter = rateLimit({
 });
 
 // Middleware
+app.set('trust proxy', 1);
 app.use(helmet()); // Security headers
 app.use(limiter); // Rate limiting
-app.use(cors()); // Enable CORS
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+})); // Enable CORS
+app.use(cookieParser());
+app.use(ensureCsrfToken);
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+app.use('/api', csrfProtection);
+
 // Debug middleware to log all requests
-app.use((req, res, next) => {
-  console.log(`📝 ${req.method} ${req.url} - ${new Date().toISOString()}`);
-  console.log('Headers:', JSON.stringify(req.headers, null, 2));
-  if (req.body && Object.keys(req.body).length > 0) {
-    console.log('Body:', JSON.stringify(req.body, null, 2));
-  }
-  next();
-});
+if (process.env.DEBUG_REQUESTS === 'true') {
+  app.use((req, res, next) => {
+    console.log(`📝 ${req.method} ${req.url} - ${new Date().toISOString()}`);
+    if (req.body && Object.keys(req.body).length > 0) {
+      console.log('Body:', JSON.stringify(req.body, null, 2));
+    }
+    next();
+  });
+}
 
 // Health check endpoint
 app.get('/health', (req, res) => {

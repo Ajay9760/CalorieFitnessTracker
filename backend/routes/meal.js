@@ -2,8 +2,13 @@ const express = require('express');
 const { MealEntry, FoodItem, User } = require('../models');
 const { authenticateToken } = require('../middleware/auth');
 const { Op } = require('sequelize');
-const moment = require('moment');
 const router = express.Router();
+
+const normalizeDate = (value) => {
+  const parsed = value ? new Date(value) : new Date();
+  if (Number.isNaN(parsed.getTime())) return new Date().toISOString().slice(0, 10);
+  return parsed.toISOString().slice(0, 10);
+};
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -119,15 +124,21 @@ router.post('/', async (req, res) => {
 // GET /api/meals - Get user's meals
 router.get('/', async (req, res) => {
   try {
-    const { date, mealType, limit = 50, offset = 0 } = req.query;
+    const { date, startDate, endDate, mealType, limit = 50, offset = 0 } = req.query;
 
     const whereClause = {
       userId: req.user.id
     };
 
     // Add date filter if provided
-    if (date) {
-      whereClause.date = new Date(date);
+    if (date && !(startDate || endDate)) {
+      whereClause.date = normalizeDate(date);
+    }
+
+    if (startDate || endDate) {
+      whereClause.date = {};
+      if (startDate) whereClause.date[Op.gte] = normalizeDate(startDate);
+      if (endDate) whereClause.date[Op.lte] = normalizeDate(endDate);
     }
 
     // Add meal type filter if provided

@@ -70,22 +70,18 @@ module.exports = (sequelize) => {
     activityLevel: {
       type: DataTypes.ENUM('sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active'),
       allowNull: true,
-      defaultValue: 'moderately_active',
     },
     dietType: {
       type: DataTypes.ENUM('vegetarian', 'vegan', 'non_veg', 'keto', 'high_protein'),
       allowNull: true,
-      defaultValue: 'vegetarian',
     },
     region: {
       type: DataTypes.ENUM('north_indian', 'south_indian', 'east_indian', 'west_indian', 'all'),
       allowNull: true,
-      defaultValue: 'north_indian',
     },
     fitnessGoal: {
       type: DataTypes.ENUM('lose_weight', 'maintain_weight', 'gain_weight', 'build_muscle', 'cut', 'lean_bulk'),
       allowNull: true,
-      defaultValue: 'maintain_weight',
     },
     targetWeight: {
       type: DataTypes.FLOAT,
@@ -98,37 +94,30 @@ module.exports = (sequelize) => {
     weeklyWeightChangeGoal: {
       type: DataTypes.FLOAT,
       allowNull: true,
-      defaultValue: 0,
     },
     dailyCalorieGoal: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 2000,
     },
     dailyStepGoal: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 10000,
     },
     dailyWaterGoal: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 2000,
     },
     dailyProteinGoal: {
       type: DataTypes.FLOAT,
       allowNull: true,
-      defaultValue: 120,
     },
     dailyCarbsGoal: {
       type: DataTypes.FLOAT,
       allowNull: true,
-      defaultValue: 200,
     },
     dailyFatsGoal: {
       type: DataTypes.FLOAT,
       allowNull: true,
-      defaultValue: 80,
     },
     bodyFatPercentage: {
       type: DataTypes.FLOAT,

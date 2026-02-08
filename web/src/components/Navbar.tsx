@@ -1,23 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { logoutUser, selectCurrentUser } from '../store/slices/userSlice';
 
 const NavContainer = styled.nav`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 200%);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
   padding: 1rem 2rem;
   color: white;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-  }
 `;
 
 const NavContent = styled.div`
@@ -32,11 +27,11 @@ const Logo = styled.h1`
   margin: 0;
   font-size: 1.8rem;
   font-weight: bold;
-  background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+  background: linear-gradient(45deg, #fbbf24, #38bdf8, #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: glow 2s ease-in-out infinite alternate;
+  animation: glow 2.5s ease-in-out infinite alternate;
   cursor: pointer;
   transition: transform 0.3s ease;
 
@@ -60,22 +55,22 @@ const NavLinks = styled.div`
   align-items: center;
 
   @media (max-width: 768px) {
-    gap: 1rem;
+    display: none;
   }
 `;
 
 const NavLink = styled(Link)<{ $isActive: boolean }>`
   text-decoration: none;
-  color: ${props => props.$isActive ? '#ffd700' : 'white'};
+  color: ${props => props.$isActive ? '#fbbf24' : 'white'};
   font-weight: ${props => props.$isActive ? 'bold' : 'normal'};
   padding: 0.5rem 1rem;
   border-radius: 20px;
   transition: all 0.3s ease;
-  background: ${props => props.$isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent'};
+  background: ${props => props.$isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent'};
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
-    color: #ffd700;
+    color: #fbbf24;
   }
 
   @media (max-width: 768px) {
@@ -131,10 +126,86 @@ const LogoutButton = styled.button`
   }
 `;
 
+const MoreMenu = styled.div`
+  position: relative;
+`;
+
+const MoreButton = styled.button`
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+`;
+
+const MoreDropdown = styled.div<{ $open: boolean }>`
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: white;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: ${props => props.$open ? 'flex' : 'none'};
+  flex-direction: column;
+  min-width: 160px;
+  z-index: 1200;
+`;
+
+const MoreItem = styled(Link)`
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+
+  &:hover {
+    background: #f4f5ff;
+  }
+`;
+
+const MobileNav = styled.nav`
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 0.75rem 1rem;
+  z-index: 1100;
+  backdrop-filter: blur(16px);
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+  }
+`;
+
+const MobileNavLink = styled(Link)<{ $isActive: boolean }>`
+  text-decoration: none;
+  color: ${props => props.$isActive ? '#fbbf24' : '#e2e8f0'};
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
 const Navbar: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
   
@@ -145,7 +216,9 @@ const Navbar: React.FC = () => {
   return (
     <NavContainer>
       <NavContent>
-        <Logo>🍽️ Calorie Tracker</Logo>
+        <Logo as={Link} to="/dashboard" aria-label="Go to dashboard">
+          🍽️ Calorie Tracker
+        </Logo>
         <NavLinks>
           <NavLink to="/dashboard" $isActive={isActive('/dashboard')}>
             📊 Dashboard
@@ -156,32 +229,68 @@ const Navbar: React.FC = () => {
           <NavLink to="/activity" $isActive={isActive('/activity')}>
             🏃 Activity
           </NavLink>
-          <NavLink to="/gym" $isActive={isActive('/gym')}>
-            🏋️‍♂️ Gym
-          </NavLink>
           <NavLink to="/progress" $isActive={isActive('/progress')}>
             📈 Progress
-          </NavLink>
-          <NavLink to="/calculator" $isActive={isActive('/calculator')}>
-            🧮 Calculator
           </NavLink>
           <NavLink to="/profile" $isActive={isActive('/profile')}>
             👤 Profile
           </NavLink>
           
           <UserSection>
-            {currentUser && (
+            <MoreMenu>
+              <MoreButton
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={isMoreOpen}
+                onClick={() => setIsMoreOpen(prev => !prev)}
+              >
+                ⋯ More
+              </MoreButton>
+              <MoreDropdown $open={isMoreOpen} role="menu">
+                <MoreItem to="/gym" onClick={() => setIsMoreOpen(false)}>
+                  🏋️‍♂️ Gym
+                </MoreItem>
+                <MoreItem to="/calculator" onClick={() => setIsMoreOpen(false)}>
+                  🧮 Calculator
+                </MoreItem>
+              </MoreDropdown>
+            </MoreMenu>
+            {currentUser ? (
+              <>
               <UserInfo>
                 <UserName>👋 @{currentUser.username}</UserName>
                 <UserEmail>{currentUser.name}</UserEmail>
               </UserInfo>
-            )}
-            <LogoutButton onClick={handleLogout}>
-              🚪 Logout
-            </LogoutButton>
+              <LogoutButton onClick={handleLogout}>
+                🚪 Logout
+              </LogoutButton>
+              </>
+            ) : null}
           </UserSection>
         </NavLinks>
       </NavContent>
+      <MobileNav aria-label="Primary">
+        <MobileNavLink to="/dashboard" $isActive={isActive('/dashboard')} aria-label="Dashboard">
+          📊
+          <span>Dashboard</span>
+        </MobileNavLink>
+        <MobileNavLink to="/food" $isActive={isActive('/food')} aria-label="Food Log">
+          🍛
+          <span>Food</span>
+        </MobileNavLink>
+        <MobileNavLink to="/activity" $isActive={isActive('/activity')} aria-label="Activity">
+          🏃
+          <span>Activity</span>
+        </MobileNavLink>
+        <MobileNavLink to="/progress" $isActive={isActive('/progress')} aria-label="Progress">
+          📈
+          <span>Progress</span>
+        </MobileNavLink>
+        <MobileNavLink to="/profile" $isActive={isActive('/profile')} aria-label="Profile">
+          👤
+          <span>Profile</span>
+        </MobileNavLink>
+      </MobileNav>
     </NavContainer>
   );
 };

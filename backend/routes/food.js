@@ -4,6 +4,25 @@ const { authenticateToken } = require('../middleware/auth');
 const { Op } = require('sequelize');
 const router = express.Router();
 
+const parseVisionSuggestions = (text) => {
+  if (!text) return [];
+  try {
+    const parsed = JSON.parse(text);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter(item => item && typeof item.name === 'string')
+        .map(item => ({
+          name: item.name,
+          confidence: typeof item.confidence === 'number' ? item.confidence : null,
+        }))
+        .slice(0, 5);
+    }
+  } catch (error) {
+    return [];
+  }
+  return [];
+};
+
 // GET /api/foods/search - Search for food items
 router.get('/search', async (req, res) => {
   try {
@@ -67,6 +86,111 @@ router.get('/search', async (req, res) => {
       success: false,
       error: 'Search failed',
       message: 'An error occurred while searching for foods'
+    });
+  }
+});
+
+// GET /api/foods/barcode/:code - Get specific food item by barcode
+router.get('/barcode/:code', async (req, res) => {
+  try {
+    const { code } = req.params;
+    const food = await FoodItem.findOne({ where: { barcode: code } });
+
+    if (!food) {
+      return res.status(404).json({
+        success: false,
+        error: 'Not Found',
+        message: 'Food item not found for this barcode'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Food item retrieved successfully',
+      data: { food }
+    });
+  } catch (error) {
+    console.error('Barcode lookup error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Lookup failed',
+      message: 'An error occurred while retrieving the food item'
+    });
+  }
+});
+
+// POST /api/foods/scan - Analyze food image with AI (requires authentication)
+router.post('/scan', authenticateToken, async (req, res) => {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(501).json({
+        success: false,
+        error: 'Not Configured',
+        message: 'AI scanning is not configured'
+      });
+    }
+
+    const { imageData } = req.body;
+    if (!imageData) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation Error',
+        message: 'Image data is required'
+      });
+    }
+
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_VISION_MODEL || 'gpt-4o-mini',
+        input: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'input_text',
+                text: 'Identify the food in this image. Return a JSON array of up to 5 suggestions with fields: name (string), confidence (0-1).',
+              },
+              {
+                type: 'input_image',
+                image_url: { url: imageData },
+              },
+            ],
+          },
+        ],
+        temperature: 0.2,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI vision error:', errorText);
+      return res.status(502).json({
+        success: false,
+        error: 'AI Service Error',
+        message: 'Unable to analyze image'
+      });
+    }
+
+    const result = await response.json();
+    const outputText = result.output_text || '';
+    const suggestions = parseVisionSuggestions(outputText);
+
+    res.json({
+      success: true,
+      message: 'Scan completed',
+      data: { suggestions }
+    });
+  } catch (error) {
+    console.error('Food scan error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Scan failed',
+      message: 'An error occurred while analyzing the image'
     });
   }
 });

@@ -1,109 +1,112 @@
-import React from 'react';
-import { Provider, useSelector } from 'react-redux';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { store } from './store';
-import Homepage from './pages/Homepage';
-import Dashboard from './pages/Dashboard';
-import FoodLog from './pages/FoodLog';
-import Activity from './pages/Activity';
-import Gym from './pages/Gym';
-import Progress from './pages/Progress';
-import Profile from './pages/Profile';
-import Auth from './pages/Auth';
-import CalorieCalculator from './pages/CalorieCalculator';
+import { AppDispatch, store } from './store';
 import Navbar from './components/Navbar';
-import { selectIsAuthenticated } from './store/slices/userSlice';
+import { checkAuthStatus, selectIsAuthenticated } from './store/slices/userSlice';
+import { authApi } from './services/api';
 import './App.css';
 
+const Homepage = lazy(() => import('./pages/Homepage'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const FoodLog = lazy(() => import('./pages/FoodLog'));
+const Activity = lazy(() => import('./pages/Activity'));
+const Gym = lazy(() => import('./pages/Gym'));
+const Progress = lazy(() => import('./pages/Progress'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Auth = lazy(() => import('./pages/Auth'));
+const CalorieCalculator = lazy(() => import('./pages/CalorieCalculator'));
+
+const AppLoader = () => (
+  <div className="app-loader" role="status" aria-live="polite">
+    <div className="app-loader__spinner" />
+    <p>Loading your dashboard…</p>
+  </div>
+);
+
+const AppLayout = ({ children }: { children: React.ReactNode }) => (
+  <>
+    <a className="skip-link" href="#main-content">Skip to content</a>
+    <Navbar />
+    <main id="main-content" className="main-content">
+      {children}
+    </main>
+  </>
+);
+
 function AppContent() {
+  const dispatch = useDispatch<AppDispatch>();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  useEffect(() => {
+    authApi.csrf().catch(() => undefined);
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
 
   return (
     <Router basename="/CalorieFitnessTracker">
       <div className="App">
-        <Routes>
-          {/* Public routes - no authentication required */}
-          <Route path="/" element={<Homepage />} />
-          <Route path="/auth" element={<Auth />} />
-          
-          {/* Protected routes - require authentication */}
-          {isAuthenticated ? (
-            <>
-              <Route path="/dashboard" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+        <Suspense fallback={<AppLoader />}>
+          <Routes>
+            {/* Public routes - no authentication required */}
+            <Route path="/" element={<Homepage />} />
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Protected routes - require authentication */}
+            {isAuthenticated ? (
+              <>
+                <Route path="/dashboard" element={
+                  <AppLayout>
                     <Dashboard />
-                  </main>
-                </>
-              } />
-              <Route path="/food" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/food" element={
+                  <AppLayout>
                     <FoodLog />
-                  </main>
-                </>
-              } />
-              <Route path="/activity" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/activity" element={
+                  <AppLayout>
                     <Activity />
-                  </main>
-                </>
-              } />
-              <Route path="/gym" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/gym" element={
+                  <AppLayout>
                     <Gym />
-                  </main>
-                </>
-              } />
-              <Route path="/progress" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/progress" element={
+                  <AppLayout>
                     <Progress />
-                  </main>
-                </>
-              } />
-              <Route path="/profile" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/profile" element={
+                  <AppLayout>
                     <Profile />
-                  </main>
-                </>
-              } />
-              <Route path="/calculator" element={
-                <>
-                  <Navbar />
-                  <main className="main-content">
+                  </AppLayout>
+                } />
+                <Route path="/calculator" element={
+                  <AppLayout>
                     <CalorieCalculator />
-                  </main>
-                </>
-              } />
-            </>
-          ) : (
-            /* Redirect protected routes to auth if not authenticated */
-            <Route path="/dashboard" element={<Navigate to="/auth" replace />} />
-          )}
-          
-          {/* Demo route - publicly accessible */}
-          <Route path="/demo" element={
-            <>
-              <Navbar />
-              <main className="main-content">
+                  </AppLayout>
+                } />
+              </>
+            ) : (
+              /* Redirect protected routes to auth if not authenticated */
+              <Route path="/dashboard" element={<Navigate to="/auth" replace />} />
+            )}
+            
+            {/* Demo route - publicly accessible */}
+            <Route path="/demo" element={
+              <AppLayout>
                 <Dashboard />
-              </main>
-            </>
-          } />
-          
-          {/* Catch all other routes */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+              </AppLayout>
+            } />
+            
+            {/* Catch all other routes */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </div>
     </Router>
   );
